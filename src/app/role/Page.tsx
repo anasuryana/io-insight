@@ -1,5 +1,3 @@
-import ChartDonatGue from "@/components/chart-donat-gue"
-import ChartGue from "@/components/chart-gue"
 import { Badge } from "@/components/ui/badge"
 import {
     Breadcrumb,

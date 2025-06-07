@@ -1,11 +1,14 @@
 import { LoginForm } from "@/components/login-form"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
 
 export function Page({ onLoggedIn }: { onLoggedIn: any }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isSigning, setIsSigning] = useState(false)
+  const [messageFromServer, setMessageFromServer] = useState('')
 
   useEffect(() => {
     if (localStorage.getItem('isLoggedIn')) {
@@ -17,13 +20,32 @@ export function Page({ onLoggedIn }: { onLoggedIn: any }) {
   }, [])
 
   function handleClick() {
-    if (username === "admin" && password === "1234") {
-      localStorage.setItem("isLoggedIn", "true");
-      onLoggedIn(true)
-      navigate('dashboard')
-    } else {
-      alert("Login gagal!");
-    }
+    setIsSigning(true)
+    const dataInput = JSON.stringify({
+      username: username, password: password
+    })
+    setMessageFromServer('')
+    axios
+      .post(import.meta.env.VITE_APP_ENDPOINT + '/users/login', dataInput, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        const token = response.data.token
+        localStorage.setItem('isLoggedIn', token)
+        onLoggedIn(true)
+        setIsSigning(false)
+        setMessageFromServer('')
+        navigate('dashboard')
+      }).catch(error => {
+        try {
+          setMessageFromServer(error.response.data.errors.message)
+        } catch (e) {
+          setMessageFromServer(error.message)
+        }
+        setIsSigning(false)
+      })
   }
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -34,6 +56,8 @@ export function Page({ onLoggedIn }: { onLoggedIn: any }) {
           password={password}
           onUsernameChange={setUsername}
           onPasswordChange={setPassword}
+          isSigning={isSigning}
+          messageFromServer={messageFromServer}
         />
       </div>
     </div>

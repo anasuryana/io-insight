@@ -9,7 +9,7 @@ import {
 import { useEffect } from "react"
 import { Outlet, useNavigate } from "react-router-dom"
 
-export default function Page({ onLoggedIn }: { onLoggedIn: any }) {
+export default function Page({ userInfo }: { onLoggedIn: any, userInfo: any }) {
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem('isLoggedIn')) {
@@ -19,7 +19,7 @@ export default function Page({ onLoggedIn }: { onLoggedIn: any }) {
   }, [])
   return (
     <SidebarProvider defaultOpen={false}>
-      <AppSidebar />
+      <AppSidebar userInfo={userInfo} />
       <SidebarInset>
         <Outlet />
       </SidebarInset>

@@ -90,7 +90,13 @@ const data = {
   ]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  userInfo: any;
+};
+
+export function AppSidebar({ userInfo, ...props }: AppSidebarProps) {
+  data.user.name = userInfo.name
+  data.user.email = userInfo.email
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

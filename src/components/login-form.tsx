@@ -9,12 +9,16 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { AlertCircle } from "lucide-react"
 type LoginFormProps = React.ComponentProps<"div"> & {
   userName: string;
   password: string;
+  messageFromServer: string;
   onUsernameChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onLogin?: () => void;
+  isSigning: boolean;
 };
 
 export function LoginForm({
@@ -24,6 +28,8 @@ export function LoginForm({
   userName,
   onUsernameChange,
   onPasswordChange,
+  isSigning,
+  messageFromServer,
   ...props
 }: LoginFormProps) {
 
@@ -56,9 +62,21 @@ export function LoginForm({
                 <Input id="password" type="password" required onChange={(e) => onPasswordChange(e.target.value)} />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="button" className="w-full" onClick={onLogin}>
+                <Button type="button" className="w-full" disabled={isSigning} onClick={onLogin}>
                   Login
                 </Button>
+              </div>
+              <div className="flex flex-col gap-3">
+                {messageFromServer && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Unable to process your request</AlertTitle>
+                    <AlertDescription>
+                      <p>{messageFromServer}</p>
+
+                    </AlertDescription>
+                  </Alert>
+                )}
               </div>
             </div>
           </form>
