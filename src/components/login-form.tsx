@@ -56,7 +56,7 @@ export function LoginForm({
                 <Input id="password" type="password" required onChange={(e) => onPasswordChange(e.target.value)} />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" onClick={onLogin}>
+                <Button type="button" className="w-full" onClick={onLogin}>
                   Login
                 </Button>
               </div>
