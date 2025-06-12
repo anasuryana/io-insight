@@ -15,14 +15,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-const chartData = [
-  { month: "January", ng: 186, retry: 80 },
-  { month: "February", ng: 305, retry: 200 },
-  { month: "March", ng: 237, retry: 120 },
-  { month: "April", ng: 73, retry: 190 },
-  { month: "May", ng: 209, retry: 130 },
-  { month: "June", ng: 214, retry: 140 },
-]
+
+// const chartData = [
+//   { time: "January", ng: 186, retry: 80 },
+//   { time: "February", ng: 305, retry: 200 },
+//   { time: "March", ng: 237, retry: 120 },
+//   { time: "April", ng: 73, retry: 190 },
+//   { time: "May", ng: 209, retry: 130 },
+//   { time: "June", ng: 214, retry: 140 },
+// ]
 
 const chartConfig = {
   ng: {
@@ -35,7 +36,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function ChartGue() {
+export default function ChartGue({ theData }: any) {
+
   return (
     // Card utama: fleksibel + tinggi minimum biar aman di layar kecil
     <Card className="flex flex-col flex-grow h-full min-h-[240px]">
@@ -49,18 +51,18 @@ export default function ChartGue() {
           >
             <BarChart
               accessibilityLayer
-              data={chartData}
+              data={theData}
               margin={{ top: 10, right: 10, left: 0, bottom: 30 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
-                dataKey="month"
-                tickLine={false}
+                dataKey="time"
+                tickLine={true}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickFormatter={(value) => value.substring(0, 7)}
                 textAnchor="end"
-                interval={1}
+                interval={0}
                 className="text-[10px] sm:text-xs"
               />
               <YAxis axisLine={false} />

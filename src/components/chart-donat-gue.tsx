@@ -20,9 +20,9 @@ import {
 export const description = "A donut chart"
 
 const chartData = [
-    { browser: "ng", visitors: 275, fill: "red" },
-    { browser: "retry", visitors: 200, fill: "yellow" },
-    { browser: "good", visitors: 187, fill: "green" },
+    { browser: "ng", visitors: 0, fill: "red" },
+    { browser: "retry", visitors: 0, fill: "yellow" },
+    { browser: "good", visitors: 0, fill: "green" },
 ]
 
 const chartConfig = {
@@ -44,7 +44,11 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
-export default function ChartDonatGue() {
+export default function ChartDonatGue({ theData }: any) {
+    theData.map((k: any) => {
+        chartData[0].visitors += Number(k.ng)
+        chartData[1].visitors += Number(k.retry)
+    })
     return (
         <Card className="flex flex-col flex-grow h-full min-h-[240px]">
             <CardContent className="flex-grow p-0 min-h-0 overflow-hidden">

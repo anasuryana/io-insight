@@ -13,10 +13,36 @@ import {
 
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import axios from "axios"
 import { CalendarDays, ChartColumn, Settings } from "lucide-react"
+import { useEffect, useState } from "react"
 
 
 export function Page() {
+    const [chartData, setChartData] = useState([
+        { time: "January", ng: 186, retry: 80 },
+        { time: "February", ng: 305, retry: 200 },
+        { time: "March", ng: 237, retry: 120 },
+        { time: "April", ng: 73, retry: 190 },
+        { time: "May", ng: 209, retry: 130 },
+        { time: "June", ng: 214, retry: 140 },
+    ])
+
+    useEffect(() => {
+        axios
+            .get(import.meta.env.VITE_APP_ENDPOINT + '/report/chart1', {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                const data = response.data.data
+                setChartData(data)
+            }).catch(error => {
+                console.log(error)
+            })
+    }, [])
+
     return (
         <>
             {/* Layout utama: full height layar, tanpa scroll luar */}
@@ -45,7 +71,7 @@ export function Page() {
                     </div>
 
                     {/* Cards section: tinggi fleksibel sesuai isi */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-3 flex-shrink-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3 flex-shrink-0">
                         {/* Not Good Card */}
                         <div className="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-4">
                             <div className="text-red-500 text-3xl">❌</div>
@@ -66,15 +92,7 @@ export function Page() {
                             </div>
                         </div>
 
-                        {/* Good Card */}
-                        <div className="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-4">
-                            <div className="text-green-500 text-3xl">✅</div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800">Good</h3>
-                                <p className="text-3xl font-bold text-gray-900">150</p>
-                                <a href="#" className="text-blue-500 text-sm">Details</a>
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Charts section: ambil sisa ruang + tidak overflow */}
@@ -82,12 +100,12 @@ export function Page() {
 
                         {/* Donut Chart (kosong dulu) */}
                         <div className=" md:col-span-1 flex flex-col min-h-[300px]">
-                            <ChartDonatGue />
+                            <ChartDonatGue theData={chartData} />
                         </div>
 
                         {/* Bar Chart */}
                         <div className=" md:col-span-2 flex flex-col min-h-0">
-                            <ChartGue />
+                            <ChartGue theData={chartData} />
                         </div>
                     </div>
                 </div>
