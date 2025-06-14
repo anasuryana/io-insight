@@ -94,7 +94,7 @@ export default function DialogDevicePage({ open, onClose, setParentId, setParent
                     <DialogTitle>Find Device</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-center gap-2 md:flex-row">
                         <Select value={searchBy.toLowerCase()} onValueChange={handleSearchByChange}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Search by" />
