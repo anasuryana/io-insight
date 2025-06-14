@@ -8,8 +8,7 @@ import {
 
 import {
   Avatar,
-  AvatarFallback,
-  AvatarImage,
+  AvatarFallback,  
 } from "@/components/ui/avatar"
 import {
   DropdownMenu,
