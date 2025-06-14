@@ -6,7 +6,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter,
- 
+
 } from "@/components/ui/dialog"
 
 import {
@@ -40,8 +40,7 @@ export default function DialogDevicePage({ open, onClose, setParentId, setParent
     const [rowData, setRowData] = useState({ data: [] })
     const handleSearch = () => {
         setIsSearching(true)
-        console.log("Searching for:", searchTerm)
-        console.log("Searching by:", searchBy)
+
         const params = {
             searchBy: searchBy,
             searchValue: searchTerm
@@ -56,7 +55,7 @@ export default function DialogDevicePage({ open, onClose, setParentId, setParent
             .then((response) => {
                 setIsSearching(false)
                 const data = response.data.data
-                console.log(data)
+
                 setRowData({ data: data })
             }).catch(error => {
                 setIsSearching(false)
@@ -112,7 +111,7 @@ export default function DialogDevicePage({ open, onClose, setParentId, setParent
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <table className="w-full text-sm border border-gray-200">
+                    <table className="w-full text-sm border-collapse border border-gray-200">
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="border p-2 text-left">Tx IP</th>
@@ -132,11 +131,11 @@ export default function DialogDevicePage({ open, onClose, setParentId, setParent
                                         IP_device_rx: item.IP_device_rx,
                                         model: item.model,
                                         line_name: item.line_name,
-                                    })} className="hover:bg-gray-100 cursor-pointer transition-colors">
-                                        <td>{item.IP_device_tx}</td>
-                                        <td>{item.IP_device_rx}</td>
-                                        <td>{item.model}</td>
-                                        <td>{item.line_name}</td>
+                                    })} className="border hover:bg-gray-100 cursor-pointer transition-colors">
+                                        <td className="border">{item.IP_device_tx}</td>
+                                        <td className="border">{item.IP_device_rx}</td>
+                                        <td className="border">{item.model}</td>
+                                        <td className="border">{item.line_name}</td>
                                     </tr>
                                 })
                             }
