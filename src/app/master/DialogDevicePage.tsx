@@ -30,14 +30,16 @@ interface FindModalProps {
     setParentRXIP: any
     setParentModel: any
     setParentLine: any
+    rowData: { data: any[] }
+    setRowData: (val: { data: any[] }) => void
 }
 
 export default function DialogDevicePage({ open, onClose, setParentId, setParentTXIP, setParentRXIP,
-    setParentModel, setParentLine }: FindModalProps) {
+    setParentModel, setParentLine, rowData, setRowData }: FindModalProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [searchBy, setSearchBy] = useState<"txIP" | "rxIP" | "model" | "line">("txIP")
     const [isSearching, setIsSearching] = useState(false)
-    const [rowData, setRowData] = useState({ data: [] })
+
     const handleSearch = () => {
         setIsSearching(true)
 

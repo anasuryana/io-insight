@@ -27,7 +27,9 @@ export default function DevicePage() {
     const [line, setLine] = useState("")
     const txIPRef = useRef<HTMLInputElement>(null)
     const [isSaving, setIsSaving] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
     const [messageFromServer, setMessageFromServer] = useState('')
+    const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
 
     const handleNew = () => {
         setMessageFromServer('')
@@ -111,8 +113,46 @@ export default function DevicePage() {
                     setMessageFromServer(msg)
                 })
         }
+    }
 
+    const handleDelete = () => {
+        if (!rowId) {
+            alert('nothing to be deleted')
+            return
+        }
+        if (!confirm('Are you sure want to DELETE ?')) {
+            return
+        }
 
+        setIsDeleting(true)
+        axios
+            .delete(import.meta.env.VITE_APP_ENDPOINT + '/device-master', {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    id: rowId
+                }
+            })
+            .then((response) => {
+                setIsDeleting(false)
+                setMessageFromServer('')
+                setRowId("");
+                setTxIP("");
+                setRxIP("");
+                setModel("");
+                setLine("");
+                alert(response.data.message)
+            }).catch(error => {
+                setIsDeleting(false)
+
+                const respon = Object.keys(error.response.data)
+                let msg = ''
+                for (const item of respon) {
+                    msg += `<p>${error.response.data[item]}</p>`
+                }
+                setMessageFromServer(msg)
+            })
     }
 
     const [showFindModal, setShowFindModal] = useState(false)
@@ -143,8 +183,8 @@ export default function DevicePage() {
                         <div className="rounded-lg p-4 flex items-center space-x-4">
                             <Button size='sm' onClick={handleNew}>New</Button>
                             <Button size='sm' onClick={handleSave} disabled={isSaving}>Save</Button>
-                            <Button size='sm' onClick={() => setShowFindModal(true)}>Find</Button>
-                            <Button size='sm' variant={'destructive'}>Delete</Button>
+                            <Button size='sm' onClick={() => { setRowData({ data: [] }); setShowFindModal(true); }}>Find</Button>
+                            <Button size='sm' variant={'destructive'} onClick={handleDelete} disabled={isDeleting}>Delete</Button>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-3 flex-shrink-0">
@@ -189,7 +229,9 @@ export default function DevicePage() {
             <DialogDevicePage open={showFindModal} onClose={() => setShowFindModal(false)}
                 setParentId={setRowId} setParentTXIP={setTxIP}
                 setParentRXIP={setRxIP} setParentModel={setModel}
-                setParentLine={setLine} />
+                setParentLine={setLine}
+                rowData={rowData}
+                setRowData={setRowData} />
         </>
     )
 }
