@@ -9,12 +9,14 @@ import {
 import { useEffect } from "react"
 import { Outlet, useNavigate } from "react-router-dom"
 
-export default function Page({ userInfo }: { onLoggedIn: any, userInfo: any }) {
+export default function Page({ userInfo, onLoggedIn }: { onLoggedIn: any, userInfo: any }) {
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem('isLoggedIn')) {
+      onLoggedIn(true)
     } else {
       navigate('/')
+      onLoggedIn(false)
     }
   }, [])
   return (

@@ -71,8 +71,8 @@ const data = {
       icon: File,
       items: [
         {
-          title: "Machine Line",
-          url: "#",
+          title: "Device",
+          url: "master-device",
         },
       ],
     },

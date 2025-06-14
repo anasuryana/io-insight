@@ -6,14 +6,17 @@ import { Page as RolePage } from "./app/role/Page"
 import { Page as HomePage } from "./app/home/Page"
 import { useState } from "react";
 import axios from "axios"
+import DevicePage from "./app/master/DevicePage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({})
   console.log(isLoggedIn)
+
   function handleLoggedIn(theval: any) {
     setIsLoggedIn(theval)
+
     if (theval) {
       navigate('dashboard')
       const config = {
@@ -48,6 +51,7 @@ function App() {
           element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} >
           <Route index element={<HomePage />} />
           <Route path="role" element={<RolePage />} />
+          <Route path="master-device" element={<DevicePage />} />
         </Route>
         <Route>
           <Route path="*" element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} />
