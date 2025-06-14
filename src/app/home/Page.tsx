@@ -28,6 +28,9 @@ export function Page() {
         { time: "June", ng: 214, retry: 140 },
     ])
 
+    const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
+    const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
+
     useEffect(() => {
         axios
             .get(import.meta.env.VITE_APP_ENDPOINT + '/report/chart1', {
@@ -77,7 +80,7 @@ export function Page() {
                             <div className="text-red-500 text-3xl">❌</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
-                                <p className="text-3xl font-bold text-gray-900">100</p>
+                                <p className="text-3xl font-bold text-gray-900">{totalNg}</p>
                                 <a href="#" className="text-blue-500 text-sm">Details</a>
                             </div>
                         </div>
@@ -87,7 +90,7 @@ export function Page() {
                             <div className="text-yellow-500 text-3xl">⚠️</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Retry</h3>
-                                <p className="text-3xl font-bold text-gray-900">30</p>
+                                <p className="text-3xl font-bold text-gray-900">{totalRetry}</p>
                                 <a href="#" className="text-blue-500 text-sm">Details</a>
                             </div>
                         </div>

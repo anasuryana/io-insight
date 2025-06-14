@@ -45,10 +45,10 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function ChartDonatGue({ theData }: any) {
-    theData.map((k: any) => {
-        chartData[0].visitors += Number(k.ng)
-        chartData[1].visitors += Number(k.retry)
-    })
+
+    chartData[0].visitors = theData.reduce((total: any, item: any) => Number(total) + Number(item.ng), 0)
+    chartData[1].visitors = theData.reduce((total: any, item: any) => Number(total) + Number(item.retry), 0)
+
     return (
         <Card className="flex flex-col flex-grow h-full min-h-[240px]">
             <CardContent className="flex-grow p-0 min-h-0 overflow-hidden">
