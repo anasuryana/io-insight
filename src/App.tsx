@@ -2,12 +2,12 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Page from "./app/dashboard/Page"
 import { Page as LoginPage } from "./app/login/Page"
-import { Page as RolePage } from "./app/role/Page"
 import { Page as HomePage } from "./app/home/Page"
 import { useState } from "react";
 import axios from "axios"
 import DevicePage from "./app/master/DevicePage";
 import SMSPage from "./app/master/SMSPage";
+import RolePage from "./app/access/RolePage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -51,7 +51,7 @@ function App() {
           path="dashboard"
           element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} >
           <Route index element={<HomePage />} />
-          <Route path="role" element={<RolePage />} />
+          <Route path="access-role" element={<RolePage />} />
           <Route path="master-device" element={<DevicePage />} />
           <Route path="master-sms" element={<SMSPage />} />
         </Route>
