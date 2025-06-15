@@ -7,6 +7,7 @@ import { Page as HomePage } from "./app/home/Page"
 import { useState } from "react";
 import axios from "axios"
 import DevicePage from "./app/master/DevicePage";
+import SMSPage from "./app/master/SMSPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -52,6 +53,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="role" element={<RolePage />} />
           <Route path="master-device" element={<DevicePage />} />
+          <Route path="master-sms" element={<SMSPage />} />
         </Route>
         <Route>
           <Route path="*" element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} />

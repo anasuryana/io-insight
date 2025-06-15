@@ -74,6 +74,10 @@ const data = {
           title: "Device",
           url: "master-device",
         },
+        {
+          title: "SMS",
+          url: "master-sms",
+        },
       ],
     },
     {
