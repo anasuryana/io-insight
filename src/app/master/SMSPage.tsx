@@ -13,7 +13,7 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useRef, useState } from "react"
-import DialogDevicePage from "./DialogDevicePage"
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import axios from "axios"
