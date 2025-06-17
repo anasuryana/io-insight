@@ -10,7 +10,6 @@ import {
 
 import { Separator } from "@/components/ui/separator"
 import {
-
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import axios from "axios"
@@ -32,18 +31,25 @@ export function Page() {
     const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
 
     useEffect(() => {
-        axios
-            .get(import.meta.env.VITE_APP_ENDPOINT + '/report/chart1', {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then((response) => {
-                const data = response.data.data
-                setChartData(data)
-            }).catch(error => {
-                console.log(error)
-            })
+        const fetchData = () => {
+            axios
+                .get(import.meta.env.VITE_APP_ENDPOINT + '/report/chart1', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    const data = response.data.data
+                    setChartData(data)
+                }).catch(error => {
+                    console.log(error)
+                })
+        }
+        fetchData()
+
+        const interval = setInterval(fetchData, 60000); // ⏱️ refresh tiap 60 detik
+
+        return () => clearInterval(interval); // 🧹 bersihkan saat komponen unmount
     }, [])
 
     return (
