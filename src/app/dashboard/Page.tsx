@@ -5,6 +5,7 @@ import {
   SidebarProvider,
 
 } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner";
 
 import { useEffect } from "react"
 import { Outlet, useNavigate } from "react-router-dom"
@@ -24,6 +25,7 @@ export default function Page({ userInfo, onLoggedIn }: { onLoggedIn: any, userIn
       <AppSidebar userInfo={userInfo} />
       <SidebarInset>
         <Outlet />
+        <Toaster position="top-center" />
       </SidebarInset>
     </SidebarProvider>
   )

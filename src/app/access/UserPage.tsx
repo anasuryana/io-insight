@@ -1,11 +1,84 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@radix-ui/react-separator";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function UserPage() {
+    const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
+    const [pageAt, setPageAt] = useState<Number>(0)
+    const [isMaxPage, setIsMaxPage] = useState(false)
+
+    useEffect(() => {
+        goToPage(1)
+    }, [])
+
+    function goToPage(thePage: Number) {
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        axios.get(import.meta.env.VITE_APP_ENDPOINT + '/user-access?page=' + thePage, config)
+            .then((response) => {
+                const datanya = response.data.data.data
+                setRowData({
+                    data: datanya
+                })
+
+                setPageAt(thePage)
+                if (!response.data.data.next_page_url) {
+                    setIsMaxPage(true)
+                } else {
+                    setIsMaxPage(false)
+                }
+            }).catch(error => {
+                setPageAt(0)
+                console.log(error)
+            })
+    }
+
+    function handleClickSwitch(currentVal: { currentStatus: string, rowData: { id: Number }, theIndex: Number }) {
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        axios.put(import.meta.env.VITE_APP_ENDPOINT + '/user-access/activation',
+            { id: currentVal.rowData.id, active: currentVal.currentStatus == '1' ? '0' : '1' }, config)
+            .then((response) => {
+                const firstCondition = currentVal.currentStatus == '1' ? 'Active' : 'Inactive'
+                const secondCondition = currentVal.currentStatus == '1' ? 'Inactive' : 'Active'
+                toast(response.data.message, {
+                    description: `from ${firstCondition} to ${secondCondition}`
+                })
+                const theChecekedDate = new Date().toISOString().replace('T', ' ').replace('Z', '')
+                const nextRow = rowData.data.map((item: any, index) => {
+                    if (index == currentVal.theIndex) {
+                        return {
+                            ...item, updated_at: theChecekedDate, active: currentVal.currentStatus == '1' ? '0' : '1'
+                        }
+                    } else {
+                        return item
+                    }
+                })
+                setRowData({
+                    data: nextRow
+                })
+            }).catch(error => {
+                alert(error)
+                alert(error.response.data.message)
+            })
+
+    }
+
     return (
         <div>
             <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
@@ -36,27 +109,39 @@ export default function UserPage() {
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Nama</th>
                                         <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Activation</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Email</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Username</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Role</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Created At</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Updated At</th>
                                         <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
                                     {/* Contoh banyak data */}
-                                    {Array.from({ length: 50 }, (_, i) => (
-                                        <tr key={i}>
-                                            <td className="px-4 py-2 border border-gray-300">User {i + 1}</td>
-                                            <td className="px-4 py-2 border border-gray-300"><Switch /></td>
-                                            <td className="px-4 py-2 border border-gray-300">user{i + 1}@mail.com</td>
-                                            <td className="px-4 py-2 border border-gray-300">
-                                                <div className="flex gap-x-2">
-                                                    <Button variant={'success'} size={'sm'}>Edit</Button>
-                                                    <Button variant={'destructive'} size={'sm'}>Delete</Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {
+                                        rowData.data.map((item: any, index) => {
+                                            return <tr key={index}>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    <Switch checked={item.active == '1' ? true : false} onClick={() => {
+                                                        handleClickSwitch({
+                                                            currentStatus: item.active,
+                                                            rowData: { id: item.id }, theIndex: index
+                                                        })
+                                                    }} /></td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.nick_name}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.role_name}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    <div className="flex gap-x-2">
+                                                        <Button variant={'success'} size={'sm'}>Edit</Button>
+                                                        <Button variant={'destructive'} size={'sm'}>Delete</Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        })
+                                    }
                                 </tbody>
                             </table>
                         </div>
@@ -64,8 +149,8 @@ export default function UserPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <Button className="rounded-r-none border-r-0">Previous</Button>
-                                    <Button className="rounded-l-none">Next</Button>
+                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false}>Previous</Button>
+                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false}>Next</Button>
                                 </div>
                             </div>
                             <div className="flex sm:justify-end">
