@@ -149,8 +149,8 @@ export default function UserPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false}>Previous</Button>
-                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false}>Next</Button>
+                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
+                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
                                 </div>
                             </div>
                             <div className="flex sm:justify-end">
