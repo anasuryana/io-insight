@@ -101,7 +101,7 @@ export default function UserAddDialog({ open, onClose }: FindModalProps) {
                 const respon = Object.keys(error.response.data)
                 let msg = ''
                 for (const item of respon) {
-                    msg += `<p>${error.response.data[item]}</p>`
+                    msg += `${error.response.data[item]}`
                 }
                 toast.error('Server Response', { description: msg })
             })
