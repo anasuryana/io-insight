@@ -15,7 +15,6 @@ interface FindModalProps {
 export default function UserAddDialog({ open, onClose }: FindModalProps) {
     const [status, setStatus] = useState("")
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
-    const [messageFromServer, setMessageFromServer] = useState('')
     const [isSaving, setIsSaving] = useState(false)
 
     const [formData, setFormData] = useState({
