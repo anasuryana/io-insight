@@ -172,7 +172,7 @@ export default function UserPage() {
             </div>
 
             <UserAddDialog open={showFindModal} onClose={() => setShowFindModal(false)} />
-            <UserEditDialog open={showFindModal2} onClose={() => setShowFindModal2(false)} selectedRowData={rowDataSelected} />
+            <UserEditDialog open={showFindModal2} onClose={() => { setShowFindModal2(false); goToPage(1) }} selectedRowData={rowDataSelected} />
         </div>
 
     )
