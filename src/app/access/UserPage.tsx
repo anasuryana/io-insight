@@ -7,9 +7,11 @@ import { Separator } from "@radix-ui/react-separator";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import UserAddDialog from "./UserAddDialog";
 
 export default function UserPage() {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
+    const [rowDataSelected, setRowDataSelected] = useState<{ data: any[] }>({ data: [] })
     const [pageAt, setPageAt] = useState<Number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
 
@@ -79,6 +81,8 @@ export default function UserPage() {
 
     }
 
+    const [showFindModal, setShowFindModal] = useState(false)
+
     return (
         <div>
             <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
@@ -101,7 +105,7 @@ export default function UserPage() {
                                 <h2 className="text-xl font-semibold">User List</h2>
                             </div>
                             <div className="flex sm:justify-end">
-                                <Button variant="default" size={'sm'}>New</Button>
+                                <Button variant="default" size={'sm'} onClick={() => setShowFindModal(true)}>New</Button>
                             </div>
                         </div>
 
@@ -162,6 +166,7 @@ export default function UserPage() {
                 </Card>
             </div>
 
+            <UserAddDialog open={showFindModal} onClose={() => setShowFindModal(false)} />
         </div>
 
     )
