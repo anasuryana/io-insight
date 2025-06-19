@@ -8,6 +8,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import UserAddDialog from "./UserAddDialog";
+import UserEditDialog from "./UserEditPage";
 
 export default function UserPage() {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
@@ -82,6 +83,7 @@ export default function UserPage() {
     }
 
     const [showFindModal, setShowFindModal] = useState(false)
+    const [showFindModal2, setShowFindModal2] = useState(false)
 
     return (
         <div>
@@ -139,7 +141,10 @@ export default function UserPage() {
                                                 <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
                                                 <td className="px-4 py-2 border border-gray-300">
                                                     <div className="flex gap-x-2">
-                                                        <Button variant={'success'} size={'sm'}>Edit</Button>
+                                                        <Button variant={'success'} size={'sm'} onClick={() => {
+                                                            setRowDataSelected(item)
+                                                            setShowFindModal2(true)
+                                                        }}>Edit</Button>
                                                         <Button variant={'destructive'} size={'sm'}>Delete</Button>
                                                     </div>
                                                 </td>
@@ -167,6 +172,7 @@ export default function UserPage() {
             </div>
 
             <UserAddDialog open={showFindModal} onClose={() => setShowFindModal(false)} />
+            <UserEditDialog open={showFindModal2} onClose={() => setShowFindModal2(false)} selectedRowData={rowDataSelected} />
         </div>
 
     )
