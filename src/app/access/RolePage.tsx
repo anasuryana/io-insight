@@ -1,116 +1,56 @@
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
-import { Separator } from "@/components/ui/separator"
-import {
-    SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { useRef, useState } from "react"
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
-import axios from "axios"
-import DialogRolePage from "./DialogRolePage"
-
-
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@radix-ui/react-separator";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import RoleAddDialog from "./RoleAddDialog";
+import RoleEditDialog from "./RoleEditDialog";
 
 export default function RolePage() {
-    const [rowId, setRowId] = useState("")
-    const [name, setName] = useState("")
-
-    const nameRef = useRef<HTMLInputElement>(null)
-    const [isSaving, setIsSaving] = useState(false)
-    const [isDeleting, setIsDeleting] = useState(false)
-    const [messageFromServer, setMessageFromServer] = useState('')
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
+    const [rowDataSelected, setRowDataSelected] = useState<{ data: any[] }>({ data: [] })
+    const [pageAt, setPageAt] = useState<Number>(0)
+    const [isMaxPage, setIsMaxPage] = useState(false)
 
-    const handleNew = () => {
-        setMessageFromServer('')
-        setRowId("");
-        setName("");
+    useEffect(() => {
+        goToPage(1)
+    }, [])
 
-        setTimeout(() => {
-            nameRef.current?.focus();
-        }, 0);
-    };
+    function goToPage(thePage: Number) {
 
-    const handleSave = () => {
-        const datanya = {
-            name: name,
-            id: rowId
-        }
-        if (!rowId) {
-            if (!confirm('Are you sure want to save ?')) {
-                return
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
             }
-            setIsSaving(true)
-            axios
-                .post(import.meta.env.VITE_APP_ENDPOINT + '/role-access', datanya, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
-                    },
-                })
-                .then((response) => {
-                    setIsSaving(false)
-                    setMessageFromServer('')
-                    setRowId("");
-                    setName("");
-
-
-                    alert(response.data.message)
-                }).catch(error => {
-                    setIsSaving(false)
-
-                    const respon = Object.keys(error.response.data)
-                    let msg = ''
-                    for (const item of respon) {
-                        msg += `<p>${error.response.data[item]}</p>`
-                    }
-                    setMessageFromServer(msg)
-                })
-        } else {
-            if (!confirm('Are you sure want to update ?')) {
-                return
-            }
-
-            setIsSaving(true)
-            axios
-                .put(import.meta.env.VITE_APP_ENDPOINT + '/role-access', datanya, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
-                    },
-                })
-                .then((response) => {
-                    setIsSaving(false)
-                    setMessageFromServer('')
-                    setRowId("");
-                    setName("");
-
-
-                    alert(response.data.message)
-                }).catch(error => {
-                    setIsSaving(false)
-
-                    const respon = Object.keys(error.response.data)
-                    let msg = ''
-                    for (const item of respon) {
-                        msg += `<p>${error.response.data[item]}</p>`
-                    }
-                    setMessageFromServer(msg)
-                })
         }
+
+        axios.get(import.meta.env.VITE_APP_ENDPOINT + '/role-access?page=' + thePage, config)
+            .then((response) => {
+                const datanya = response.data.data.data
+                setRowData({
+                    data: datanya
+                })
+
+                setPageAt(thePage)
+                if (!response.data.data.next_page_url) {
+                    setIsMaxPage(true)
+                } else {
+                    setIsMaxPage(false)
+                }
+            }).catch(error => {
+                setPageAt(0)
+                console.log(error)
+            })
     }
 
-    const handleDelete = () => {
+    const [showFindModal, setShowFindModal] = useState(false)
+    const [showFindModal2, setShowFindModal2] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const handleDelete = (rowId: string) => {
         if (!rowId) {
             alert('nothing to be deleted')
             return
@@ -132,81 +72,98 @@ export default function RolePage() {
             })
             .then((response) => {
                 setIsDeleting(false)
-                setMessageFromServer('')
-                setRowId("");
-                setName("");
-
-
-                alert(response.data.message)
+                goToPage(1)
+                toast.success('Server Response', { description: response.data.message })
             }).catch(error => {
                 setIsDeleting(false)
-
                 const respon = Object.keys(error.response.data)
                 let msg = ''
                 for (const item of respon) {
-                    msg += `<p>${error.response.data[item]}</p>`
+                    msg += `${error.response.data[item]}`
                 }
-                setMessageFromServer(msg)
+                toast.error('Server Response', { description: msg })
             })
     }
 
-    const [showFindModal, setShowFindModal] = useState(false)
-
     return (
-        <>
-            {/* Layout utama: full height layar, tanpa scroll luar */}
-            <div className="bg-gray-100 h-screen flex flex-col overflow-hidden">
+        <div>
+            <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
+                <SidebarTrigger className="-ml-1" />
+                <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem className="md:block">
+                            <BreadcrumbLink href="#">Role Management</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </header>
 
-                {/* Header tetap tinggi 64px */}
-                <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem className="md:block">
-                                <BreadcrumbLink href="#">Role Access</BreadcrumbLink>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </header>
-
-                {/* Kontainer isi utama (card + chart): fleksibel & scrollable */}
-                <div className="bg-white container mx-auto p-2 flex-grow flex flex-col overflow-auto min-h-0">
-                    {/* Cards section: tinggi fleksibel sesuai isi */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-1 flex-shrink-0">
-                        {/* Not Good Card */}
-                        <div className="rounded-lg p-4 flex items-center space-x-4">
-                            <Button size='sm' onClick={handleNew}>New</Button>
-                            <Button size='sm' onClick={handleSave} disabled={isSaving}>Save</Button>
-                            <Button size='sm' onClick={() => { setRowData({ data: [] }); setShowFindModal(true); }}>Find</Button>
-                            <Button size='sm' variant={'destructive'} onClick={handleDelete} disabled={isDeleting}>Delete</Button>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-1 gap-1 mb-3 flex-shrink-0">
-                        <div className="rounded-lg p-2 flex items-center">
-                            <div className="grid w-full max-w-sm items-center gap-1">
-                                <Label htmlFor="name">Name</Label>
-                                <Input type="text" id="name" placeholder="Name" ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} />
+            <div className="grid grid-cols-1 m-2">
+                <Card className="w-full">
+                    <CardContent>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <h2 className="text-xl font-semibold">Role List</h2>
+                            </div>
+                            <div className="flex sm:justify-end">
+                                <Button variant="default" size={'sm'} onClick={() => setShowFindModal(true)}>New</Button>
                             </div>
                         </div>
-                    </div>
 
-                    {messageFromServer && (<div className="grid grid-cols-1 md:grid-cols-1 gap-1 items-center">
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Unable to process your request</AlertTitle>
-                            <AlertDescription dangerouslySetInnerHTML={{ __html: messageFromServer }}>
+                        <div className="overflow-auto max-h-[57vh] border border-gray-300 rounded mb-3">
+                            <table className="w-full text-sm border-collapse">
+                                <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
+                                    <tr>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Name</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Created At</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Updated At</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
+                                    {/* Contoh banyak data */}
+                                    {
+                                        rowData.data.map((item: any, index) => {
+                                            return <tr key={index}>
+                                                <td className="px-4 py-2 border border-gray-300">{item.name}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
+                                                <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
+                                                <td className="px-4 py-2 border border-gray-300">
+                                                    <div className="flex gap-x-2">
+                                                        <Button variant={'success'} size={'sm'} onClick={() => {
+                                                            setRowDataSelected(item)
+                                                            setShowFindModal2(true)
+                                                        }}>Edit</Button>
+                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
 
-                            </AlertDescription>
-                        </Alert>
-                    </div>)}
-                </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <div className="inline-flex rounded-md shadow-sm" role="group">
+                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
+                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
+                                </div>
+                            </div>
+                            <div className="flex sm:justify-end">
+
+                            </div>
+                        </div>
+                    </CardContent>
+
+                </Card>
             </div>
-            <DialogRolePage open={showFindModal} onClose={() => setShowFindModal(false)}
-                setParentId={setRowId} setParentName={setName}
-                rowData={rowData}
-                setRowData={setRowData} />
-        </>
+
+            <RoleAddDialog open={showFindModal} onClose={() => { setShowFindModal(false); goToPage(1) }} />
+            <RoleEditDialog open={showFindModal2} onClose={() => { setShowFindModal2(false); goToPage(1) }} selectedRowData={rowDataSelected} />
+        </div>
+
     )
 }
-
