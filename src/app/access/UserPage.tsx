@@ -84,6 +84,42 @@ export default function UserPage() {
 
     const [showFindModal, setShowFindModal] = useState(false)
     const [showFindModal2, setShowFindModal2] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const handleDelete = (rowId: string) => {
+        if (!rowId) {
+            alert('nothing to be deleted')
+            return
+        }
+        if (!confirm('Are you sure want to DELETE ?')) {
+            return
+        }
+
+        setIsDeleting(true)
+        axios
+            .delete(import.meta.env.VITE_APP_ENDPOINT + '/user-access', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
+                },
+                data: {
+                    id: rowId
+                }
+            })
+            .then((response) => {
+                setIsDeleting(false)
+                goToPage(1)
+                toast.success('Server Response', { description: response.data.message })
+            }).catch(error => {
+                setIsDeleting(false)
+                const respon = Object.keys(error.response.data)
+                let msg = ''
+                for (const item of respon) {
+                    msg += `${error.response.data[item]}`
+                }
+                toast.error('Server Response', { description: msg })
+            })
+    }
 
     return (
         <div>
@@ -145,7 +181,7 @@ export default function UserPage() {
                                                             setRowDataSelected(item)
                                                             setShowFindModal2(true)
                                                         }}>Edit</Button>
-                                                        <Button variant={'destructive'} size={'sm'}>Delete</Button>
+                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
                                                     </div>
                                                 </td>
                                             </tr>
