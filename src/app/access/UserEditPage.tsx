@@ -27,13 +27,9 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
     })
 
     const handleSearch = () => {
-        const params = {
-            searchBy: 'name',
-            searchValue: ''
-        }
-        const paramsUrl = new URLSearchParams(params)
+
         axios
-            .get(import.meta.env.VITE_APP_ENDPOINT + '/role-access?' + paramsUrl, {
+            .get(import.meta.env.VITE_APP_ENDPOINT + '/role-access/list', {
                 headers: {
                     'Content-Type': 'application/json'
                 }
