@@ -13,69 +13,32 @@ interface FindModalProps {
     selectedRowData: any
 }
 
-export default function UserEditDialog({ open, onClose, selectedRowData }: FindModalProps) {
-    const [status, setStatus] = useState("")
-    const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
+export default function SMSEditDialog({ open, onClose, selectedRowData }: FindModalProps) {
     const [isSaving, setIsSaving] = useState(false)
-
+    const [status, setStatus] = useState("")
     const [formData, setFormData] = useState({
         name: "",
-        role_id: "",
-        password: "",
-        passwordc: "",
-        nick_name: ""
+        telp_no: "",
+        status: "",
+        id_user: ""
     })
 
-    const handleSearch = () => {
-
-        axios
-            .get(import.meta.env.VITE_APP_ENDPOINT + '/role-access/list', {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then((response) => {
-                const data = response.data.data
-                setRowData({ data: data })
-                setStatus(selectedRowData.role_id)
-            }).catch(error => {
-                console.log(error)
-            })
-    }
-
     useEffect(() => {
-        handleSearch()
+        setStatus(selectedRowData.status)
         setFormData({
-            name: selectedRowData.name || "", // atau pakai `name` tergantung API lo
-            role_id: selectedRowData.role_id || "",
-            password: "",
-            passwordc: "",
-            nick_name: selectedRowData.nick_name || ""
+            name: selectedRowData.name || "",
+            telp_no: selectedRowData.telp_no || "",
+            status: selectedRowData.status || "",
+            id_user: selectedRowData.id_user || "",
         })
     }, [open, selectedRowData])
 
     const handleSave = () => {
         const datanya = {
             name: formData.name,
-            role_id: status,
-            password: formData.password,
-            nick_name: formData.nick_name
-        }
-
-        if (formData.password != formData.passwordc) {
-            toast('Validation', {
-                description: `please confirm the password`
-            })
-            return
-        }
-
-        if (formData.password.length > 0 || formData.passwordc.length > 0) {
-            if (formData.password.length < 8) {
-                toast('Validation', {
-                    description: `Minimum 8 characters`
-                })
-                return
-            }
+            telp_no: formData.telp_no,
+            status: status,
+            id_user: formData.id_user,
         }
 
         if (!confirm('Are you sure want to save changes ?')) {
@@ -84,7 +47,7 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
 
         setIsSaving(true)
         axios
-            .put(import.meta.env.VITE_APP_ENDPOINT + '/user-access', datanya, {
+            .put(import.meta.env.VITE_APP_ENDPOINT + '/sms-master', datanya, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
@@ -94,10 +57,9 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
                 setIsSaving(false)
                 setFormData({
                     name: "",
-                    role_id: "",
-                    password: "",
-                    passwordc: "",
-                    nick_name: ""
+                    telp_no: "",
+                    status: "",
+                    id_user: ""
                 })
                 toast.success('Server Response', { description: response.data.message })
             }).catch(error => {
@@ -106,7 +68,7 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
                 const respon = Object.keys(error.response.data)
                 let msg = ''
                 for (const item of respon) {
-                    msg += `<p>${error.response.data[item]}</p>`
+                    msg += `${error.response.data[item]}`
                 }
                 toast.error('Server Response', { description: msg })
             })
@@ -120,7 +82,7 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Edit User</DialogTitle>
+                    <DialogTitle>Edit Device</DialogTitle>
                 </DialogHeader>
                 <div className="grid grid-cols-1 md:grid-cols-2 m-2 gap-2">
                     <div>
@@ -131,36 +93,29 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
                     </div>
                     <div>
                         <div className="grid gap-3">
-                            <Label htmlFor="role-1">Role</Label>
+                            <Label htmlFor="name-2">Phone</Label>
+                            <Input id="name-2" name="telp_no" onChange={handleChangeForm} value={formData.telp_no} />
+                        </div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-1 m-2 gap-2">
+                    <div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="role-1">Status</Label>
                             <Select name="role-1" value={status} onValueChange={(val) => setStatus(val)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Choose" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {
-                                        rowData.data.map((item: any, _) => {
-                                            return <SelectItem value={item.id}>{item.name}</SelectItem>
-                                        })
-                                    }
+                                    <SelectItem value="active">Active</SelectItem>
+                                    <SelectItem value="inactive">Inactive</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
+
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 m-2 gap-2">
-                    <div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="pw-1">Password</Label>
-                            <Input id="pw-1" name="password" type="password" onChange={handleChangeForm} value={formData.password} title="Leave it blank to avoid edit password" />
-                        </div>
-                    </div>
-                    <div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="pw-2">Confirm Password</Label>
-                            <Input id="pw-2" name="passwordc" type="password" onChange={handleChangeForm} value={formData.passwordc} title="Leave it blank to avoid edit password" />
-                        </div>
-                    </div>
-                </div>
+
                 <DialogFooter>
                     <Button type="submit" onClick={handleSave} disabled={isSaving}>Save changes</Button>
                 </DialogFooter>
@@ -168,4 +123,3 @@ export default function UserEditDialog({ open, onClose, selectedRowData }: FindM
         </Dialog >
     )
 }
-
