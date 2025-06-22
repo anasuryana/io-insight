@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
-
+import { useMask } from '@react-input/mask';
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,6 +14,10 @@ interface FindModalProps {
 }
 
 export default function SMSAddDialog({ open, onClose }: FindModalProps) {
+    const inputRef = useMask({
+        mask: '+62 000-0000-0000',
+        replacement: { '0': /\d/ },
+    });
     const [isSaving, setIsSaving] = useState(false)
     const [formData, setFormData] = useState({
         name: "",
@@ -86,7 +90,7 @@ export default function SMSAddDialog({ open, onClose }: FindModalProps) {
                     <div>
                         <div className="grid gap-3">
                             <Label htmlFor="name-2">Phone</Label>
-                            <Input id="name-2" name="telp_no" onChange={handleChangeForm} value={formData.telp_no} />
+                            <Input id="name-2" name="telp_no" onChange={handleChangeForm} value={formData.telp_no} ref={inputRef} placeholder="852-1848-1513" />
                         </div>
                     </div>
                 </div>

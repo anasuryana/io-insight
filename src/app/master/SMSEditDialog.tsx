@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
+import { useMask } from '@react-input/mask';
 interface FindModalProps {
     open: boolean
     onClose: () => void
@@ -14,6 +14,10 @@ interface FindModalProps {
 }
 
 export default function SMSEditDialog({ open, onClose, selectedRowData }: FindModalProps) {
+    const inputRef = useMask({
+        mask: '+62 000-0000-0000',
+        replacement: { '0': /\d/ },
+    });
     const [isSaving, setIsSaving] = useState(false)
     const [status, setStatus] = useState("")
     const [formData, setFormData] = useState({
@@ -94,7 +98,7 @@ export default function SMSEditDialog({ open, onClose, selectedRowData }: FindMo
                     <div>
                         <div className="grid gap-3">
                             <Label htmlFor="name-2">Phone</Label>
-                            <Input id="name-2" name="telp_no" onChange={handleChangeForm} value={formData.telp_no} />
+                            <Input id="name-2" name="telp_no" onChange={handleChangeForm} value={formData.telp_no} ref={inputRef} placeholder="852-1848-1513" />
                         </div>
                     </div>
                 </div>
