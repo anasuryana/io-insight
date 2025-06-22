@@ -10,7 +10,7 @@ import DeviceAddDialog from "./DeviceAddDialog";
 import DeviceEditDialog from "./DeviceEditDialog";
 
 
-export default function RolePage() {
+export default function DevicePage() {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
     const [rowDataSelected, setRowDataSelected] = useState<{ data: any[] }>({ data: [] })
     const [pageAt, setPageAt] = useState<Number>(0)
