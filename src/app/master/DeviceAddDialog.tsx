@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -75,13 +76,13 @@ export default function DeviceAddDialog({ open, onClose }: FindModalProps) {
                     <div>
                         <div className="grid gap-3">
                             <Label htmlFor="name-1">Tx IP</Label>
-                            <Input id="name-1" name="IP_device_tx" onChange={handleChangeForm} value={formData.IP_device_tx} />
+                            <Input id="name-1" name="IP_device_tx" onChange={handleChangeForm} value={formData.IP_device_tx} placeholder="ex : 192.168.0.0"/>
                         </div>
                     </div>
                     <div>
                         <div className="grid gap-3">
                             <Label htmlFor="name-2">Rx IP</Label>
-                            <Input id="name-2" name="IP_device_rx" onChange={handleChangeForm} value={formData.IP_device_rx} />
+                            <Input id="name-2" name="IP_device_rx" onChange={handleChangeForm} value={formData.IP_device_rx} placeholder="ex : 192.168.0.0"/>                           
                         </div>
                     </div>
                 </div>
