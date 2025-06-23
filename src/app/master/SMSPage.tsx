@@ -136,7 +136,7 @@ export default function SMSPage() {
                                                             setRowDataSelected(item)
                                                             setShowFindModal2(true)
                                                         }}>Edit</Button>
-                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
+                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.user_id)} disabled={isDeleting}>Delete</Button>
                                                     </div>
                                                 </td>
                                             </tr>
