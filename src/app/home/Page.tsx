@@ -26,7 +26,7 @@ export function Page() {
         { time: "May", ng: 209, retry: 130 },
         { time: "June", ng: 214, retry: 140 },
     ])
-
+    const [lineData, setLineData] = useState({ lineName: '' })
     const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
     const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
 
@@ -41,6 +41,7 @@ export function Page() {
                 .then((response) => {
                     const data = response.data.data
                     setChartData(data)
+                    setLineData({ lineName: response.data.line_name })
                 }).catch(error => {
                     console.log(error)
                 })
@@ -74,7 +75,7 @@ export function Page() {
                 <div className="container mx-auto p-2 flex-grow flex flex-col overflow-auto min-h-0">
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-1 flex-shrink-0 text-neutral-400">
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><Settings /> Line : </div>
+                        <div className="rounded-lg p-1 flex items-center space-x-4"><Settings /> Line : <Badge variant={'default'}>{lineData.lineName}</Badge></div>
                         <div className="rounded-lg p-1 flex items-center space-x-4"><CalendarDays /> Time : </div>
                         <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: 'yellow', color: 'black' }}>Retry</Badge></div>
                     </div>
