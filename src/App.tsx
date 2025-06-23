@@ -9,6 +9,7 @@ import DevicePage from "./app/master/DevicePage";
 import SMSPage from "./app/master/SMSPage";
 import RolePage from "./app/access/RolePage";
 import UserPage from "./app/access/UserPage";
+import Report1Page from "./app/report/Report1Page";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -56,6 +57,7 @@ function App() {
           <Route path="access-user" element={<UserPage />} />
           <Route path="master-device" element={<DevicePage />} />
           <Route path="master-sms" element={<SMSPage />} />
+          <Route path="report-1" element={<Report1Page />} />
         </Route>
         <Route>
           <Route path="*" element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} />
