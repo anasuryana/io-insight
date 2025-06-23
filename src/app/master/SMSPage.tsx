@@ -68,7 +68,7 @@ export default function SMSPage() {
                     Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
                 },
                 data: {
-                    id: rowId
+                    id_user: rowId
                 }
             })
             .then((response) => {
