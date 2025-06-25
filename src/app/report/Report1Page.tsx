@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { FileSpreadsheet, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 
@@ -16,8 +16,11 @@ export default function Report1Page() {
     })
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
     const [pageAt, setPageAt] = useState<Number>(0)
+    const [resumeNG, setResumeNG] = useState<Number>(0)
+    const [resumeRetry, setResumeRetry] = useState<Number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
     const [isSearching, setIsSearching] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
 
     useEffect(() => {
         goToPage(1)
@@ -42,6 +45,8 @@ export default function Report1Page() {
                 setRowData({
                     data: datanya
                 })
+                setResumeNG(response.data.dataStatus.ng)
+                setResumeRetry(response.data.dataStatus.retry)
 
                 setPageAt(thePage)
                 if (!response.data.data.next_page_url) {
@@ -54,6 +59,37 @@ export default function Report1Page() {
                 setPageAt(0)
                 console.log(error)
             })
+    }
+
+    const saveBlob = (function () {
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        a.setAttribute('style', "display: none");
+        return function (blob: any, fileName: any) {
+            const url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+    }());
+
+    function handleClickExport() {
+        const params = new URLSearchParams(formData).toString()
+        setIsExporting(true)
+        if (confirm('Are you sure want to export the data ?')) {
+            axios({
+                url: import.meta.env.VITE_APP_ENDPOINT + '/report/report1-to-spreadsheet?' + params,
+                method: 'GET',
+                responseType: 'blob',
+            }).then(response => {
+                setIsExporting(false)
+                saveBlob(response.data, `Logs from ${formData.dateFrom} to ${formData.dateTo} .csv`)
+            }).catch(error => {
+                console.log(error)
+                setIsExporting(false)
+            })
+        }
     }
 
     return (
@@ -77,7 +113,7 @@ export default function Report1Page() {
                             <div className="text-red-500 text-3xl">❌</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
-                                <p className="text-3xl font-bold text-gray-900">{0}</p>
+                                <p className="text-3xl font-bold text-gray-900">{resumeNG.toString()}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -91,7 +127,7 @@ export default function Report1Page() {
                             <div className="text-red-500 text-3xl">⚠️</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Retry</h3>
-                                <p className="text-3xl font-bold text-gray-900">{0}</p>
+                                <p className="text-3xl font-bold text-gray-900">{resumeRetry.toString()}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -112,7 +148,10 @@ export default function Report1Page() {
                                 <Input type="date" onChange={handleChange} name="dateTo" />
                             </div>
                             <div>
-                                <Button variant="default" size={'sm'} onClick={() => goToPage(1)} disabled={isSearching}><Search /> Find</Button>
+                                <div className="flex gap-x-2">
+                                    <Button variant="default" size={'sm'} onClick={() => goToPage(1)} disabled={isSearching}><Search /> Find</Button>
+                                    <Button variant="success" size={'sm'} disabled={isExporting} onClick={handleClickExport}><FileSpreadsheet /> Export</Button>
+                                </div>
                             </div>
                         </div>
 
