@@ -6,7 +6,8 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import axios from "axios";
 import { FileSpreadsheet, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 
 export default function Report1Page() {
@@ -23,10 +24,6 @@ export default function Report1Page() {
     const [isSearching, setIsSearching] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
     const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
-
-    useEffect(() => {
-        goToPage(1)
-    }, [])
 
     function handleChange(e: any) {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -78,9 +75,13 @@ export default function Report1Page() {
     }());
 
     function handleClickExport() {
-        const params = new URLSearchParams(formData).toString()
-        setIsExporting(true)
+        if (!formData.dateFrom || !formData.dateTo) {
+            toast.warning('Validation', { description: `Please select date range` })
+            return
+        }
         if (confirm('Are you sure want to export the data ?')) {
+            const params = new URLSearchParams(formData).toString()
+            setIsExporting(true)
             axios({
                 url: import.meta.env.VITE_APP_ENDPOINT + '/report/report1-to-spreadsheet?' + params,
                 method: 'GET',
@@ -152,7 +153,13 @@ export default function Report1Page() {
                             </div>
                             <div>
                                 <div className="flex gap-x-2">
-                                    <Button variant="default" size={'sm'} onClick={() => goToPage(1)} disabled={isSearching}><Search /> Find</Button>
+                                    <Button variant="default" size={'sm'} onClick={() => {
+                                        if (!formData.dateFrom || !formData.dateTo) {
+                                            toast.warning('Validation', { description: `Please select date` })
+                                            return
+                                        }
+                                        goToPage(1)
+                                    }} disabled={isSearching}><Search /> Find</Button>
                                     <Button variant="success" size={'sm'} disabled={isExporting} onClick={handleClickExport}><FileSpreadsheet /> Export</Button>
                                 </div>
                             </div>
@@ -162,11 +169,11 @@ export default function Report1Page() {
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
-                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">#</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Date</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Time</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Number</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Color</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
@@ -188,13 +195,13 @@ export default function Report1Page() {
                                             }
 
                                             return <tr key={index}>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{(index + 1)}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">
                                                     <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
                                                 </td>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
                                             </tr>
                                         })
                                     }
