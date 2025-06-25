@@ -16,11 +16,13 @@ export default function Report1Page() {
     })
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
     const [pageAt, setPageAt] = useState<Number>(0)
+    const [lastPage, setLastPage] = useState<number>(0)
     const [resumeNG, setResumeNG] = useState<Number>(0)
     const [resumeRetry, setResumeRetry] = useState<Number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
     const [isSearching, setIsSearching] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
+    const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
 
     useEffect(() => {
         goToPage(1)
@@ -47,6 +49,7 @@ export default function Report1Page() {
                 })
                 setResumeNG(response.data.dataStatus.ng)
                 setResumeRetry(response.data.dataStatus.retry)
+                setLastPage(response.data.data.last_page)
 
                 setPageAt(thePage)
                 if (!response.data.data.next_page_url) {
@@ -206,6 +209,15 @@ export default function Report1Page() {
                             <div className="flex sm:justify-end">
                                 <div className="inline-flex rounded-md shadow-sm" role="group">
                                     <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
+                                    {pages.map((page) => (
+                                        <Button
+                                            key={page}
+                                            className={page === pageAt ? 'bg-gray-500 rounded-none' : 'rounded-none'}
+                                            onClick={() => goToPage(page)}
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
                                     <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
                                 </div>
                             </div>
