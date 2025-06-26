@@ -31,6 +31,9 @@ export function Page() {
     const hours = String(today.getHours()).padStart(2, '0');
     const minutes = String(today.getMinutes()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+    const [badgeContent, setBadgeContent] = useState('')
+    const [badgeBG, setBadgeBG] = useState('')
+    const [badgeColor, setBadgeColor] = useState('')
 
     useEffect(() => {
 
@@ -49,6 +52,24 @@ export function Page() {
                         lastStatus: response.data.last_status,
                         isDataExist: response.data.is_data_exist
                     })
+                    switch (response.data.last_status) {
+                        case 'Red':
+                            setBadgeContent('Not Good');
+                            setBadgeBG('red');
+                            setBadgeColor('white'); break;
+                        case 'Yellow':
+                            setBadgeContent('Retry');
+                            setBadgeBG('yellow');
+                            setBadgeColor('black'); break;
+                        case 'Green':
+                            setBadgeContent('Good');
+                            setBadgeBG('green');
+                            setBadgeColor('white'); break;
+                        case 'Off':
+                            setBadgeContent('Offline');
+                            setBadgeBG('gray');
+                            setBadgeColor('white'); break;
+                    }
                 }).catch(error => {
                     console.log(error)
                 })
@@ -84,7 +105,11 @@ export function Page() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-1 flex-shrink-0 text-neutral-400">
                         <div className="rounded-lg p-1 flex items-center space-x-4"><Settings /> Line : <Badge variant={'default'}>{lineData.lineName}</Badge></div>
                         <div className="rounded-lg p-1 flex items-center space-x-4"><CalendarDays /> Time : <Badge variant={'default'}>{formattedDate}</Badge></div>
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: lineData.lastStatus, color: 'black' }}>{lineData.lastStatus}</Badge></div>
+                        <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: badgeBG, color: badgeColor }}>
+                            {
+                                badgeContent
+
+                            }</Badge></div>
                     </div>
 
                     {/* Cards section: tinggi fleksibel sesuai isi */}
