@@ -22,7 +22,6 @@ export const description = "A donut chart"
 const chartData = [
     { browser: "ng", visitors: 0, fill: "red" },
     { browser: "retry", visitors: 0, fill: "yellow" },
-    { browser: "good", visitors: 0, fill: "green" },
 ]
 
 const chartConfig = {
@@ -37,10 +36,7 @@ const chartConfig = {
         label: "Retry",
         color: "yellow",
     },
-    good: {
-        label: "Good",
-        color: "green",
-    },
+
 
 } satisfies ChartConfig
 
