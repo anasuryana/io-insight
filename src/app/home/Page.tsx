@@ -19,12 +19,7 @@ import { useEffect, useState } from "react"
 
 export function Page() {
     const [chartData, setChartData] = useState([
-        { time: "January", ng: 186, retry: 80 },
-        { time: "February", ng: 305, retry: 200 },
-        { time: "March", ng: 237, retry: 120 },
-        { time: "April", ng: 73, retry: 190 },
-        { time: "May", ng: 209, retry: 130 },
-        { time: "June", ng: 214, retry: 140 },
+        { time: "January", ng: 0, retry: 0 },
     ])
     const [lineData, setLineData] = useState({ lineName: '', lastStatus: '', isDataExist: '' })
     const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
