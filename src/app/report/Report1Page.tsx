@@ -121,9 +121,7 @@ export default function Report1Page() {
                             </div>
                         </div>
                     </CardContent>
-                    <CardFooter className="border-t border-gray-200 !py-1">
-                        <p><a href="#" className="text-blue-500 text-sm">Details</a></p>
-                    </CardFooter>
+
                 </Card>
                 <Card className="w-full p-1 !gap-1">
                     <CardContent className="p-1">
@@ -135,9 +133,7 @@ export default function Report1Page() {
                             </div>
                         </div>
                     </CardContent>
-                    <CardFooter className="border-t border-gray-200 !py-1">
-                        <p><a href="#" className="text-blue-500 text-sm">Details</a></p>
-                    </CardFooter>
+
                 </Card>
             </div>
 
