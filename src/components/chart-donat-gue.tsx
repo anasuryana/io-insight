@@ -52,28 +52,28 @@ export default function ChartDonatGue({ theData, lineData }: any) {
     return (
         <Card className="flex flex-col flex-grow h-full min-h-[240px]">
             <CardContent className="flex-grow p-0 min-h-0 overflow-hidden">
-                <div className="w-full h-full min-h-[240px]">
-                    {lineData.is_data_exist == '1' ? (
-                        <ChartContainer
-                            config={chartConfig}
-                            className="w-full h-full"
-                        >
-                            <PieChart>
-                                <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
-                                />
-                                <Pie
-                                    data={chartData}
-                                    dataKey="visitors"
-                                    nameKey="browser"
-                                    innerRadius={60}
-                                />
-                                <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                        </ChartContainer>
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full h-full min-h-[240px] relative">
+
+                    <ChartContainer
+                        config={chartConfig}
+                        className="w-full h-full"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={chartData}
+                                dataKey="visitors"
+                                nameKey="browser"
+                                innerRadius={60}
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
+                        </PieChart>
+                    </ChartContainer>
+                    {lineData.is_data_exist !== '1' && (
+                        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
                             <span className="text-6xl font-semibold text-gray-500">N/A</span>
                         </div>
                     )}
