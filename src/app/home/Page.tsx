@@ -15,6 +15,7 @@ import {
 import axios from "axios"
 import { CalendarDays, ChartColumn, Settings } from "lucide-react"
 import { useEffect, useState } from "react"
+import DetailDialog from "../dashboard/DetailDialog"
 
 
 export function Page() {
@@ -34,6 +35,8 @@ export function Page() {
     const [badgeContent, setBadgeContent] = useState('')
     const [badgeBG, setBadgeBG] = useState('')
     const [badgeColor, setBadgeColor] = useState('')
+    const [rowDataSelected, setRowDataSelected] = useState({ status: '' })
+    const [showFindModal, setShowFindModal] = useState(false)
 
     useEffect(() => {
 
@@ -120,7 +123,10 @@ export function Page() {
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
                                 <p className="text-3xl font-bold text-gray-900">{totalNg}</p>
-                                <a href="#" className="text-blue-500 text-sm">Details</a>
+                                <a href="#" className="text-blue-500 text-sm" onClick={() => {
+                                    setRowDataSelected({ status: 'Red' })
+                                    setShowFindModal(true)
+                                }}>Details</a>
                             </div>
                         </div>
 
@@ -130,7 +136,10 @@ export function Page() {
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Retry</h3>
                                 <p className="text-3xl font-bold text-gray-900">{totalRetry}</p>
-                                <a href="#" className="text-blue-500 text-sm">Details</a>
+                                <a href="#" className="text-blue-500 text-sm" onClick={() => {
+                                    setRowDataSelected({ status: 'Yellow' })
+                                    setShowFindModal(true)
+                                }}>Details</a>
                             </div>
                         </div>
 
@@ -152,6 +161,7 @@ export function Page() {
                     </div>
                 </div>
             </div>
+            <DetailDialog open={showFindModal} selectedRowData={rowDataSelected} onClose={() => { setShowFindModal(false); }} />
         </>
     )
 }
