@@ -44,7 +44,7 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
-export default function ChartDonatGue({ theData }: any) {
+export default function ChartDonatGue({ theData, lineData }: any) {
 
     chartData[0].visitors = theData.reduce((total: any, item: any) => Number(total) + Number(item.ng), 0)
     chartData[1].visitors = theData.reduce((total: any, item: any) => Number(total) + Number(item.retry), 0)
@@ -53,25 +53,30 @@ export default function ChartDonatGue({ theData }: any) {
         <Card className="flex flex-col flex-grow h-full min-h-[240px]">
             <CardContent className="flex-grow p-0 min-h-0 overflow-hidden">
                 <div className="w-full h-full min-h-[240px]">
-
-                    <ChartContainer
-                        config={chartConfig}
-                        className="w-full h-full"
-                    >
-                        <PieChart>
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
-                            <Pie
-                                data={chartData}
-                                dataKey="visitors"
-                                nameKey="browser"
-                                innerRadius={60}
-                            />
-                            <ChartLegend content={<ChartLegendContent />} />
-                        </PieChart>
-                    </ChartContainer>
+                    {lineData.is_data_exist == '1' ? (
+                        <ChartContainer
+                            config={chartConfig}
+                            className="w-full h-full"
+                        >
+                            <PieChart>
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Pie
+                                    data={chartData}
+                                    dataKey="visitors"
+                                    nameKey="browser"
+                                    innerRadius={60}
+                                />
+                                <ChartLegend content={<ChartLegendContent />} />
+                            </PieChart>
+                        </ChartContainer>
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-6xl font-semibold text-gray-500">N/A</span>
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>

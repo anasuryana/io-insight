@@ -26,7 +26,7 @@ export function Page() {
         { time: "May", ng: 209, retry: 130 },
         { time: "June", ng: 214, retry: 140 },
     ])
-    const [lineData, setLineData] = useState({ lineName: '', lastStatus: '' })
+    const [lineData, setLineData] = useState({ lineName: '', lastStatus: '', isDataExist: '' })
     const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
     const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
     const today = new Date();
@@ -51,7 +51,8 @@ export function Page() {
                     setChartData(data)
                     setLineData({
                         lineName: response.data.line_name,
-                        lastStatus: response.data.last_status
+                        lastStatus: response.data.last_status,
+                        isDataExist: response.data.is_data_exist
                     })
                 }).catch(error => {
                     console.log(error)
@@ -121,12 +122,12 @@ export function Page() {
 
                         {/* Donut Chart (kosong dulu) */}
                         <div className=" md:col-span-1 flex flex-col min-h-[300px]">
-                            <ChartDonatGue theData={chartData} />
+                            <ChartDonatGue theData={chartData} lineData={lineData} />
                         </div>
 
                         {/* Bar Chart */}
                         <div className=" md:col-span-2 flex flex-col min-h-0">
-                            <ChartGue theData={chartData} />
+                            <ChartGue theData={chartData} lineData={lineData} />
                         </div>
                     </div>
                 </div>

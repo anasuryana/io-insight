@@ -36,7 +36,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function ChartGue({ theData }: any) {
+export default function ChartGue({ theData, lineData }: any) {
 
   return (
     // Card utama: fleksibel + tinggi minimum biar aman di layar kecil
@@ -45,33 +45,38 @@ export default function ChartGue({ theData }: any) {
 
         {/* Wrapper chart: pakai min-h agar tetap muncul di mobile */}
         <div className="w-full h-full min-h-[240px]">
-          <ChartContainer
-            config={chartConfig}
-            className="w-full h-full"
-          >
-            <BarChart
-              accessibilityLayer
-              data={theData}
-              margin={{ top: 10, right: 10, left: 0, bottom: 30 }}
+          {lineData.is_data_exist == '1' ? (
+            <ChartContainer
+              config={chartConfig}
+              className="w-full h-full"
             >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="time"
-                tickLine={true}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.substring(0, 7)}
-                textAnchor="end"
-                interval={0}
-                className="text-[10px] sm:text-xs"
-              />
-              <YAxis axisLine={false} />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="ng" fill="var(--color-ng)" radius={4} />
-              <Bar dataKey="retry" fill="var(--color-retry)" radius={4} />
-            </BarChart>
-          </ChartContainer>
+              <BarChart
+                accessibilityLayer
+                data={theData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 30 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="time"
+                  tickLine={true}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => value.substring(0, 7)}
+                  textAnchor="end"
+                  interval={0}
+                  className="text-[10px] sm:text-xs"
+                />
+                <YAxis axisLine={false} />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar dataKey="ng" fill="var(--color-ng)" radius={4} />
+                <Bar dataKey="retry" fill="var(--color-retry)" radius={4} />
+              </BarChart>
+            </ChartContainer>) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-6xl font-semibold text-gray-500">N/A</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
