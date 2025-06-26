@@ -26,11 +26,19 @@ export function Page() {
         { time: "May", ng: 209, retry: 130 },
         { time: "June", ng: 214, retry: 140 },
     ])
-    const [lineData, setLineData] = useState({ lineName: '' })
+    const [lineData, setLineData] = useState({ lineName: '', lastStatus: '' })
     const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
     const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.toLocaleString('en-US', { month: 'short' }); // 'Jan', 'Feb', etc.
+    const day = String(today.getDate()).padStart(2, '0'); // tambahkan 0 di depan jika perlu
+    const hours = String(today.getHours()).padStart(2, '0');
+    const minutes = String(today.getMinutes()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
 
     useEffect(() => {
+
         const fetchData = () => {
             axios
                 .get(import.meta.env.VITE_APP_ENDPOINT + '/report/chart1', {
@@ -41,7 +49,10 @@ export function Page() {
                 .then((response) => {
                     const data = response.data.data
                     setChartData(data)
-                    setLineData({ lineName: response.data.line_name })
+                    setLineData({
+                        lineName: response.data.line_name,
+                        lastStatus: response.data.last_status
+                    })
                 }).catch(error => {
                     console.log(error)
                 })
@@ -76,8 +87,8 @@ export function Page() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-1 flex-shrink-0 text-neutral-400">
                         <div className="rounded-lg p-1 flex items-center space-x-4"><Settings /> Line : <Badge variant={'default'}>{lineData.lineName}</Badge></div>
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><CalendarDays /> Time : </div>
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: 'yellow', color: 'black' }}>Retry</Badge></div>
+                        <div className="rounded-lg p-1 flex items-center space-x-4"><CalendarDays /> Time : <Badge variant={'default'}>{formattedDate}</Badge></div>
+                        <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: lineData.lastStatus, color: 'black' }}>{lineData.lastStatus}</Badge></div>
                     </div>
 
                     {/* Cards section: tinggi fleksibel sesuai isi */}
