@@ -74,7 +74,7 @@ export default function ChartGue({ theData, lineData }: any) {
             </BarChart>
           </ChartContainer>
 
-          {lineData.is_data_exist !== '1' && (
+          {lineData.isDataExist != '1' && (
             <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
               <span className="text-6xl font-semibold text-gray-500">N/A</span>
             </div>
