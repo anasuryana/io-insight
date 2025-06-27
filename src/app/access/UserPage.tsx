@@ -11,115 +11,109 @@ import UserAddDialog from "./UserAddDialog";
 import UserEditDialog from "./UserEditPage";
 
 export default function UserPage() {
-    const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
-    const [rowDataSelected, setRowDataSelected] = useState<{ data: any[] }>({ data: [] })
-    const [pageAt, setPageAt] = useState<Number>(0)
-    const [isMaxPage, setIsMaxPage] = useState(false)
+    const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] });
+    const [rowDataSelected, setRowDataSelected] = useState<any>({});
+    const [pageAt, setPageAt] = useState<number>(1);
+    const [lastPage, setLastPage] = useState<number>(1);
+    const [isMaxPage, setIsMaxPage] = useState(false);
 
     useEffect(() => {
-        goToPage(1)
-    }, [])
+        goToPage(1);
+    }, []);
 
-    function goToPage(thePage: Number) {
+    const getVisiblePages = (current: number, total: number): (number | string)[] => {
+        const delta = 2;
+        const range: (number | string)[] = [];
 
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+            range.push(i);
         }
 
-        axios.get(import.meta.env.VITE_APP_ENDPOINT + '/user-access?page=' + thePage, config)
-            .then((response) => {
-                const datanya = response.data.data.data
-                setRowData({
-                    data: datanya
-                })
+        if (current - delta > 2) range.unshift("...");
+        if (current + delta < total - 1) range.push("...");
+        range.unshift(1);
+        if (total > 1) range.push(total);
 
-                setPageAt(thePage)
-                if (!response.data.data.next_page_url) {
-                    setIsMaxPage(true)
-                } else {
-                    setIsMaxPage(false)
-                }
-            }).catch(error => {
-                setPageAt(0)
-                console.log(error)
+        return range;
+    };
+
+    function goToPage(thePage: number) {
+        const config = {
+            headers: { 'Content-Type': 'application/json' }
+        };
+
+        axios.get(`${import.meta.env.VITE_APP_ENDPOINT}/user-access?page=${thePage}`, config)
+            .then((response) => {
+                const datanya = response.data.data.data;
+                setRowData({ data: datanya });
+                setPageAt(thePage);
+                setLastPage(response.data.data.last_page);
+                setIsMaxPage(!response.data.data.next_page_url);
             })
+            .catch(error => {
+                setPageAt(0);
+                console.log(error);
+            });
     }
 
     function handleClickSwitch(currentVal: { currentStatus: string, rowData: { id: Number }, theIndex: Number }) {
-
         const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-        axios.put(import.meta.env.VITE_APP_ENDPOINT + '/user-access/activation',
-            { id: currentVal.rowData.id, active: currentVal.currentStatus == '1' ? '0' : '1' }, config)
-            .then((response) => {
-                const firstCondition = currentVal.currentStatus == '1' ? 'Active' : 'Inactive'
-                const secondCondition = currentVal.currentStatus == '1' ? 'Inactive' : 'Active'
-                toast(response.data.message, {
-                    description: `from ${firstCondition} to ${secondCondition}`
-                })
-                const theChecekedDate = new Date().toISOString().replace('T', ' ').replace('Z', '')
-                const nextRow = rowData.data.map((item: any, index) => {
-                    if (index == currentVal.theIndex) {
-                        return {
-                            ...item, updated_at: theChecekedDate, active: currentVal.currentStatus == '1' ? '0' : '1'
-                        }
-                    } else {
-                        return item
-                    }
-                })
-                setRowData({
-                    data: nextRow
-                })
-            }).catch(error => {
-                alert(error)
-                alert(error.response.data.message)
-            })
+            headers: { 'Content-Type': 'application/json' }
+        };
 
+        axios.put(`${import.meta.env.VITE_APP_ENDPOINT}/user-access/activation`,
+            {
+                id: currentVal.rowData.id,
+                active: currentVal.currentStatus === '1' ? '0' : '1'
+            }, config)
+            .then((response) => {
+                toast(response.data.message, {
+                    description: `from ${currentVal.currentStatus === '1' ? 'Active' : 'Inactive'} to ${currentVal.currentStatus === '1' ? 'Inactive' : 'Active'}`
+                });
+
+                const updatedDate = new Date().toISOString().replace('T', ' ').replace('Z', '');
+                const nextRow = rowData.data.map((item, index) =>
+                    index === currentVal.theIndex
+                        ? { ...item, updated_at: updatedDate, active: currentVal.currentStatus === '1' ? '0' : '1' }
+                        : item
+                );
+                setRowData({ data: nextRow });
+            })
+            .catch(error => {
+                alert(error?.response?.data?.message || error.message);
+            });
     }
 
-    const [showFindModal, setShowFindModal] = useState(false)
-    const [showFindModal2, setShowFindModal2] = useState(false)
-    const [isDeleting, setIsDeleting] = useState(false)
+    const [showFindModal, setShowFindModal] = useState(false);
+    const [showFindModal2, setShowFindModal2] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = (rowId: string) => {
-        if (!rowId) {
-            alert('nothing to be deleted')
-            return
-        }
-        if (!confirm('Are you sure want to DELETE ?')) {
-            return
-        }
+        if (!rowId || !confirm('Are you sure want to DELETE ?')) return;
 
-        setIsDeleting(true)
-        axios
-            .delete(import.meta.env.VITE_APP_ENDPOINT + '/user-access', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
-                },
-                data: {
-                    id: rowId
-                }
-            })
+        setIsDeleting(true);
+        axios.delete(`${import.meta.env.VITE_APP_ENDPOINT}/user-access`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
+            },
+            data: { id: rowId }
+        })
             .then((response) => {
-                setIsDeleting(false)
-                goToPage(1)
-                toast.success('Server Response', { description: response.data.message })
-            }).catch(error => {
-                setIsDeleting(false)
-                const respon = Object.keys(error.response.data)
-                let msg = ''
-                for (const item of respon) {
-                    msg += `${error.response.data[item]}`
-                }
-                toast.error('Server Response', { description: msg })
+                setIsDeleting(false);
+                goToPage(1);
+                toast.success('Server Response', { description: response.data.message });
             })
-    }
+            .catch(error => {
+                setIsDeleting(false);
+                const keys = Object.keys(error.response.data);
+                let msg = '';
+                for (const k of keys) msg += `${error.response.data[k]}`;
+                toast.error('Server Response', { description: msg });
+            });
+    };
+
+    const pages = getVisiblePages(pageAt, lastPage);
 
     return (
         <div>
@@ -139,77 +133,76 @@ export default function UserPage() {
                 <Card className="w-full">
                     <CardContent>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <h2 className="text-xl font-semibold">User List</h2>
-                            </div>
+                            <div><h2 className="text-xl font-semibold">User List</h2></div>
                             <div className="flex sm:justify-end">
                                 <Button variant="default" size={'sm'} onClick={() => setShowFindModal(true)}>New</Button>
                             </div>
                         </div>
 
-                        <div className="overflow-auto max-h-[57vh] border border-gray-300 rounded mb-3">
+                        <div className="overflow-auto max-h-[60vh] border border-gray-300 rounded mb-3">
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Activation</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Username</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Role</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Created At</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Updated At</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Aksi</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Activation</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Username</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Role</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Created At</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Updated At</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
-                                    {/* Contoh banyak data */}
-                                    {
-                                        rowData.data.map((item: any, index) => {
-                                            return <tr key={index}>
-                                                <td className="px-4 py-2 border border-gray-300">
-                                                    <Switch checked={item.active == '1' ? true : false} onClick={() => {
-                                                        handleClickSwitch({
-                                                            currentStatus: item.active,
-                                                            rowData: { id: item.id }, theIndex: index
-                                                        })
-                                                    }} /></td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.nick_name}</td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.role_name}</td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
-                                                <td className="px-4 py-2 border border-gray-300">
-                                                    <div className="flex gap-x-2">
-                                                        <Button variant={'success'} size={'sm'} onClick={() => {
-                                                            setRowDataSelected(item)
-                                                            setShowFindModal2(true)
-                                                        }}>Edit</Button>
-                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        })
-                                    }
+                                    {rowData.data.map((item: any, index) => (
+                                        <tr key={index}>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                                <Switch
+                                                    checked={item.active === '1'}
+                                                    onClick={() => handleClickSwitch({
+                                                        currentStatus: item.active,
+                                                        rowData: { id: item.id },
+                                                        theIndex: index
+                                                    })}
+                                                />
+                                            </td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.nick_name}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.role_name}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
+                                            <td className="px-4 py-2 border border-gray-300">
+                                                <div className="flex gap-x-2">
+                                                    <Button variant="success" size="sm" onClick={() => {
+                                                        setRowDataSelected(item);
+                                                        setShowFindModal2(true);
+                                                    }}>Edit</Button>
+                                                    <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
-                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
-                                </div>
-                            </div>
-                            <div className="flex sm:justify-end">
+                        {/* Pagination kanan bawah */}
+                        <div className="flex justify-end mt-4">
+                            <div className="inline-flex rounded-md shadow-sm" role="group">
+                                <Button className="rounded-r-none border-r-0" disabled={pageAt === 1} onClick={() => goToPage(pageAt - 1)}>Previous</Button>
 
+                                {pages.map((page, idx) => typeof page === "number" ? (
+                                    <Button key={idx} className={`rounded-none ${page === pageAt ? 'bg-gray-500 text-white' : ''}`} onClick={() => goToPage(page)}>{page}</Button>
+                                ) : (
+                                    <Button key={idx} className="rounded-none cursor-default" disabled>...</Button>
+                                ))}
+
+                                <Button className="rounded-l-none" disabled={isMaxPage} onClick={() => goToPage(pageAt + 1)}>Next</Button>
                             </div>
                         </div>
                     </CardContent>
-
                 </Card>
             </div>
 
-            <UserAddDialog open={showFindModal} onClose={() => { setShowFindModal(false); goToPage(1) }} />
-            <UserEditDialog open={showFindModal2} onClose={() => { setShowFindModal2(false); goToPage(1) }} selectedRowData={rowDataSelected} />
+            <UserAddDialog open={showFindModal} onClose={() => { setShowFindModal(false); goToPage(1); }} />
+            <UserEditDialog open={showFindModal2} onClose={() => { setShowFindModal2(false); goToPage(1); }} selectedRowData={rowDataSelected} />
         </div>
-
-    )
+    );
 }

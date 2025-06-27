@@ -222,7 +222,7 @@ export default function Report1Page() {
                             </table>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-1">
+                        <div className="flex justify-end mt-2">
                             <div>
 
                             </div>
