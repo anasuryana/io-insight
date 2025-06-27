@@ -12,40 +12,54 @@ interface FindModalProps {
 
 export default function DetailDialog({ open, onClose, selectedRowData }: FindModalProps) {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
-    const [pageAt, setPageAt] = useState<Number>(0)
-
+    const [pageAt, setPageAt] = useState<number>(1)
     const [lastPage, setLastPage] = useState<number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
-    const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+    const pages: (number | string)[] = getVisiblePages(pageAt, lastPage);
 
-    function goToPage(thePage: Number) {
+    function getVisiblePages(current: number, total: number): (number | string)[] {
+        const delta = 2;
+        const range: (number | string)[] = [];
+    
+        for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+            range.push(i);
+        }
+    
+        if (current - delta > 2) {
+            range.unshift("...");
+        }
+    
+        if (current + delta < total - 1) {
+            range.push("...");
+        }
+    
+        range.unshift(1);
+        if (total > 1) range.push(total);
+    
+        return range;
+    }
+    function goToPage(thePage: number) {
         const params = new URLSearchParams(selectedRowData).toString()
         const config = {
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         }
+        axios
+        .get(`${import.meta.env.VITE_APP_ENDPOINT}/report/detail?${params}&page=${thePage}`, config)
+        .then((response) => {
 
-        axios.get(import.meta.env.VITE_APP_ENDPOINT + '/report/detail?' + params + '&page=' + thePage, config)
-            .then((response) => {
-
-                const datanya = response.data.data.data
-                setRowData({
-                    data: datanya
-                })
-
-                setLastPage(response.data.data.last_page)
-
-                setPageAt(thePage)
-                if (!response.data.data.next_page_url) {
-                    setIsMaxPage(true)
-                } else {
-                    setIsMaxPage(false)
-                }
-            }).catch(error => {
-                setPageAt(0)
-                console.log(error)
-            })
+            const datanya = response.data.data.data;
+            setRowData({ data: datanya });
+            setLastPage(response.data.data.last_page);
+            setPageAt(thePage);
+            setIsMaxPage(!response.data.data.next_page_url);
+            window.scrollTo({ top: 0, behavior: "smooth" }); // optional scroll to top
+        })
+        .catch(error => {
+            setPageAt(0);
+            console.log(error);
+        });
     }
 
     useEffect(() => {
@@ -61,7 +75,7 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                     <DialogTitle>Detail</DialogTitle>
                 </DialogHeader>
 
-                <div className="overflow-auto max-h-[40vh] border border-gray-300 rounded mb-1">
+                <div className="overflow-auto max-h-[50vh] border border-gray-300 rounded mb-1">
                     <table className="w-full text-sm border-collapse">
                         <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                             <tr>
@@ -110,18 +124,38 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
 
                     </div>
                     <div className="flex sm:justify-end">
-                        <div className="inline-flex rounded-md shadow-sm" role="group">
-                            <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
-                            {pages.map((page) => (
+                            <div className="inline-flex rounded-md shadow-sm" role="group">
+                            <Button
+                                className="rounded-r-none border-r-0"
+                                disabled={pageAt === 1}
+                                onClick={() => goToPage(pageAt - 1)}
+                            >
+                                Previous
+                            </Button>
+
+                            {pages.map((page, idx) =>
+                                typeof page === "number" ? (
                                 <Button
-                                    key={page}
-                                    className={page === pageAt ? 'bg-gray-500 rounded-none' : 'rounded-none'}
+                                    key={idx}
+                                    className={`rounded-none ${page === pageAt ? "bg-gray-500 text-white" : ""}`}
                                     onClick={() => goToPage(page)}
                                 >
                                     {page}
                                 </Button>
-                            ))}
-                            <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
+                                ) : (
+                                <Button key={idx} className="rounded-none cursor-default" disabled>
+                                    ...
+                                </Button>
+                                )
+                            )}
+
+                            <Button
+                                className="rounded-l-none"
+                                disabled={isMaxPage}
+                                onClick={() => goToPage(pageAt + 1)}
+                            >
+                                Next
+                            </Button>
                         </div>
                     </div>
                 </div>
