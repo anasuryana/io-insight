@@ -57,7 +57,7 @@ export default function ChartGue({ theData, lineData }: any) {
             <BarChart
               accessibilityLayer
               data={theData}
-              margin={{ top: 10, right: 10, left: 0, bottom: 30 }}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
