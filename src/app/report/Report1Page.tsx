@@ -16,49 +16,66 @@ export default function Report1Page() {
         dateTo: "",
     })
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
-    const [pageAt, setPageAt] = useState<Number>(0)
+    const [pageAt, setPageAt] = useState<number>(1)
     const [lastPage, setLastPage] = useState<number>(0)
     const [resumeNG, setResumeNG] = useState<Number>(0)
     const [resumeRetry, setResumeRetry] = useState<Number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
     const [isSearching, setIsSearching] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
-    const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+    const pages: (number | string)[] = getVisiblePages(pageAt, lastPage);
 
     function handleChange(e: any) {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-
-    function goToPage(thePage: Number) {
-        const params = new URLSearchParams(formData).toString()
+    function getVisiblePages(current: number, total: number): (number | string)[] {
+        const delta = 2;
+        const range: (number | string)[] = [];
+    
+        for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+            range.push(i);
+        }
+    
+        if (current - delta > 2) {
+            range.unshift("...");
+        }
+    
+        if (current + delta < total - 1) {
+            range.push("...");
+        }
+    
+        range.unshift(1);
+        if (total > 1) range.push(total);
+    
+        return range;
+    }
+    
+    function goToPage(thePage: number) {
+        const params = new URLSearchParams(formData).toString();
         const config = {
             headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-        setIsSearching(true)
-        axios.get(import.meta.env.VITE_APP_ENDPOINT + '/report/report1?' + params + '&page=' + thePage, config)
-            .then((response) => {
-                setIsSearching(false)
-                const datanya = response.data.data.data
-                setRowData({
-                    data: datanya
-                })
-                setResumeNG(response.data.dataStatus.ng)
-                setResumeRetry(response.data.dataStatus.retry)
-                setLastPage(response.data.data.last_page)
-
-                setPageAt(thePage)
-                if (!response.data.data.next_page_url) {
-                    setIsMaxPage(true)
-                } else {
-                    setIsMaxPage(false)
-                }
-            }).catch(error => {
-                setIsSearching(false)
-                setPageAt(0)
-                console.log(error)
-            })
+                "Content-Type": "application/json",
+            },
+        };
+        setIsSearching(true);
+        axios
+        .get(`${import.meta.env.VITE_APP_ENDPOINT}/report/report1?${params}&page=${thePage}`, config)
+        .then((response) => {
+            setIsSearching(false);
+            const datanya = response.data.data.data;
+            setRowData({ data: datanya });
+            setResumeNG(response.data.dataStatus.ng);
+            setResumeRetry(response.data.dataStatus.retry);
+            setLastPage(response.data.data.last_page);
+            setPageAt(thePage);
+            setIsMaxPage(!response.data.data.next_page_url);
+            window.scrollTo({ top: 0, behavior: "smooth" }); // optional scroll to top
+        })
+        .catch((error) => {
+            setIsSearching(false);
+            setPageAt(0);
+            console.log(error);
+        });
     }
 
     const saveBlob = (function () {
@@ -210,18 +227,38 @@ export default function Report1Page() {
 
                             </div>
                             <div className="flex sm:justify-end">
-                                <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
-                                    {pages.map((page) => (
+                                    <div className="inline-flex rounded-md shadow-sm" role="group">
+                                    <Button
+                                        className="rounded-r-none border-r-0"
+                                        disabled={pageAt === 1}
+                                        onClick={() => goToPage(pageAt - 1)}
+                                    >
+                                        Previous
+                                    </Button>
+
+                                    {pages.map((page, idx) =>
+                                        typeof page === "number" ? (
                                         <Button
-                                            key={page}
-                                            className={page === pageAt ? 'bg-gray-500 rounded-none' : 'rounded-none'}
+                                            key={idx}
+                                            className={`rounded-none ${page === pageAt ? "bg-gray-500 text-white" : ""}`}
                                             onClick={() => goToPage(page)}
                                         >
                                             {page}
                                         </Button>
-                                    ))}
-                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
+                                        ) : (
+                                        <Button key={idx} className="rounded-none cursor-default" disabled>
+                                            ...
+                                        </Button>
+                                        )
+                                    )}
+
+                                    <Button
+                                        className="rounded-l-none"
+                                        disabled={isMaxPage}
+                                        onClick={() => goToPage(pageAt + 1)}
+                                    >
+                                        Next
+                                    </Button>
                                 </div>
                             </div>
                         </div>
