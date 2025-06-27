@@ -37,7 +37,11 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function ChartGue({ theData, lineData }: any) {
-
+  const maxY = Math.max(
+    ...theData.map((item: { ng: number; retry: number }) =>
+      Math.max(item.ng ?? 0, item.retry ?? 0)
+    )
+  )
   return (
     // Card utama: fleksibel + tinggi minimum biar aman di layar kecil
     <Card className="flex flex-col flex-grow h-full min-h-[240px]">
@@ -66,7 +70,9 @@ export default function ChartGue({ theData, lineData }: any) {
                 interval={0}
                 className="text-[10px] sm:text-xs"
               />
-              <YAxis axisLine={false} />
+              <YAxis 
+                axisLine={false}
+                domain={[0, maxY]}/>
               <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="ng" fill="var(--color-ng)" radius={4} />
