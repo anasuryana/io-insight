@@ -9,19 +9,42 @@ import { toast } from "sonner";
 import SMSAddDialog from "./SMSAddDialog";
 import SMSEditDialog from "./SMSEditDialog";
 
-
 export default function SMSPage() {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
-    const [rowDataSelected, setRowDataSelected] = useState<{ data: any[] }>({ data: [] })
-    const [pageAt, setPageAt] = useState<Number>(0)
+    const [rowDataSelected, setRowDataSelected] = useState<any>({})
+    const [pageAt, setPageAt] = useState<number>(1)
+    const [lastPage, setLastPage] = useState<number>(0)
     const [isMaxPage, setIsMaxPage] = useState(false)
+    const [showFindModal, setShowFindModal] = useState(false)
+    const [showFindModal2, setShowFindModal2] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
 
     useEffect(() => {
         goToPage(1)
     }, [])
 
-    function goToPage(thePage: Number) {
+    function getVisiblePages(current: number, total: number): (number | string)[] {
+        if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
 
+        const delta = 2
+        const range: (number | string)[] = []
+
+        for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+            range.push(i)
+        }
+
+        if (current - delta > 2) range.unshift("…")
+        if (current + delta < total - 1) range.push("…")
+
+        range.unshift(1)
+        if (total > 1) range.push(total)
+
+        return range
+    }
+
+    const pages = getVisiblePages(pageAt, lastPage)
+
+    function goToPage(thePage: number) {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -31,34 +54,19 @@ export default function SMSPage() {
         axios.get(import.meta.env.VITE_APP_ENDPOINT + '/sms-master?page=' + thePage, config)
             .then((response) => {
                 const datanya = response.data.data.data
-                setRowData({
-                    data: datanya
-                })
-
+                setRowData({ data: datanya })
+                setLastPage(response.data.data.last_page)
                 setPageAt(thePage)
-                if (!response.data.data.next_page_url) {
-                    setIsMaxPage(true)
-                } else {
-                    setIsMaxPage(false)
-                }
+                setIsMaxPage(!response.data.data.next_page_url)
             }).catch(error => {
                 setPageAt(0)
                 console.log(error)
             })
     }
 
-    const [showFindModal, setShowFindModal] = useState(false)
-    const [showFindModal2, setShowFindModal2] = useState(false)
-    const [isDeleting, setIsDeleting] = useState(false)
-
     const handleDelete = (rowId: string) => {
-        if (!rowId) {
-            alert('nothing to be deleted')
-            return
-        }
-        if (!confirm('Are you sure want to DELETE ?')) {
-            return
-        }
+        if (!rowId) return alert('nothing to be deleted')
+        if (!confirm('Are you sure want to DELETE ?')) return
 
         setIsDeleting(true)
         axios
@@ -67,9 +75,7 @@ export default function SMSPage() {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + localStorage.getItem('isLoggedIn')
                 },
-                data: {
-                    id_user: rowId
-                }
+                data: { id_user: rowId }
             })
             .then((response) => {
                 setIsDeleting(false)
@@ -80,7 +86,7 @@ export default function SMSPage() {
                 const respon = Object.keys(error.response.data)
                 let msg = ''
                 for (const item of respon) {
-                    msg += `${error.response.data[item]}`
+                    msg += `${error.response.data[item]} `
                 }
                 toast.error('Server Response', { description: msg })
             })
@@ -112,7 +118,7 @@ export default function SMSPage() {
                             </div>
                         </div>
 
-                        <div className="overflow-auto max-h-[57vh] border border-gray-300 rounded mb-3">
+                        <div className="overflow-auto max-h-[60vh] border border-gray-300 rounded mb-3">
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
@@ -123,10 +129,9 @@ export default function SMSPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
-                                    {/* Contoh banyak data */}
                                     {
-                                        rowData.data.map((item: any, index) => {
-                                            return <tr key={index}>
+                                        rowData.data.map((item: any, index) => (
+                                            <tr key={index}>
                                                 <td className="px-4 py-2 border border-gray-300">{item.name}</td>
                                                 <td className="px-4 py-2 border border-gray-300">{item.telp_no}</td>
                                                 <td className="px-4 py-2 border border-gray-300">{item.status}</td>
@@ -140,31 +145,56 @@ export default function SMSPage() {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        })
+                                        ))
                                     }
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div className="flex justify-end mt-2">
                             <div>
                                 <div className="inline-flex rounded-md shadow-sm" role="group">
-                                    <Button className="rounded-r-none border-r-0" disabled={pageAt == 1 ? true : false} onClick={() => goToPage(Number(pageAt) - 1)}>Previous</Button>
-                                    <Button className="rounded-l-none" disabled={isMaxPage ? true : false} onClick={() => goToPage(Number(pageAt) + 1)}>Next</Button>
+                                    <Button
+                                        className="rounded-r-none border-r-0"
+                                        disabled={pageAt === 1}
+                                        onClick={() => goToPage(pageAt - 1)}
+                                    >
+                                        Previous
+                                    </Button>
+
+                                    {pages.map((page, idx) =>
+                                        typeof page === "number" ? (
+                                            <Button
+                                                key={idx}
+                                                className={`rounded-none ${page === pageAt ? "bg-gray-500 text-white" : ""}`}
+                                                onClick={() => goToPage(page)}
+                                            >
+                                                {page}
+                                            </Button>
+                                        ) : (
+                                            <Button key={idx} className="rounded-none cursor-default" disabled>
+                                                ...
+                                            </Button>
+                                        )
+                                    )}
+
+                                    <Button
+                                        className="rounded-l-none"
+                                        disabled={isMaxPage}
+                                        onClick={() => goToPage(pageAt + 1)}
+                                    >
+                                        Next
+                                    </Button>
                                 </div>
                             </div>
-                            <div className="flex sm:justify-end">
-
-                            </div>
+                            <div className="flex sm:justify-end"></div>
                         </div>
                     </CardContent>
-
                 </Card>
             </div>
 
             <SMSAddDialog open={showFindModal} onClose={() => { setShowFindModal(false); goToPage(1) }} />
             <SMSEditDialog open={showFindModal2} onClose={() => { setShowFindModal2(false); goToPage(1) }} selectedRowData={rowDataSelected} />
         </div>
-
     )
 }
