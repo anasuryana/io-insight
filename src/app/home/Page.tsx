@@ -79,7 +79,7 @@ export function Page() {
         }
         fetchData()
 
-        const interval = setInterval(fetchData, 60000); // ⏱️ refresh tiap 60 detik
+        const interval = setInterval(fetchData, 3000); // ⏱️ refresh tiap 60 detik
 
         return () => clearInterval(interval); // 🧹 bersihkan saat komponen unmount
     }, [])
