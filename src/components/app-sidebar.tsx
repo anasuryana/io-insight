@@ -4,6 +4,7 @@ import {
   BookOpen,
   Command,
   File,
+  FileText,
   GalleryVerticalEnd,
 
   SquareTerminal,
@@ -50,25 +51,9 @@ const data = {
   ],
   navMain: [
     {
-      title: "Access Rules",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Role",
-          url: "access-role",
-        },
-        {
-          title: "User",
-          url: "access-user",
-        },
-      ],
-    },
-    {
       title: "Master",
       url: "#",
-      icon: File,
+      icon: FileText,
       items: [
         {
           title: "Device",
@@ -86,8 +71,24 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Run",
+          title: "Report",
           url: "report-1",
+        },
+      ],
+    },
+    {
+      title: "Access Rules",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Role",
+          url: "access-role",
+        },
+        {
+          title: "User",
+          url: "access-user",
         },
       ],
     },
