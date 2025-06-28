@@ -50,7 +50,6 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="text"
-                  placeholder="fulan"
                   required
                   onChange={(e) => onUsernameChange(e.target.value)}
                 />
