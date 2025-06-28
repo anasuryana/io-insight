@@ -178,7 +178,7 @@ export default function Report1Page() {
                             </div>
                         </div>
 
-                        <div className="overflow-auto max-h-[40vh] border border-gray-300 rounded mb-1">
+                        <div className="overflow-auto max-h-[50vh] border border-gray-300 rounded mb-1">
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
