@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
-import { AlertCircle, KeyRound } from "lucide-react"
+import { AlertCircle, Command } from "lucide-react"
 type LoginFormProps = React.ComponentProps<"div"> & {
   userName: string;
   password: string;
@@ -36,12 +36,17 @@ export function LoginForm({
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-md border border-gray-200 grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-        <div className="bg-blue-600 flex flex-col items-center justify-center p-16 text-center border-r border-gray-100">
-          <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <KeyRound className="w-6 h-6 text-blue-600" />
+        <div className="bg-gradient-to-br from-blue-700 to-blue-400 relative flex flex-col justify-center items-center p-16 text-center border-r border-gray-100">
+          <div className="absolute top-6 left-6 flex items-center gap-2">
+            <div className="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center">
+              <Command className="w-6 h-6 text-blue-700" />
+            </div>
+            <span className="text-white font-bold text-xl">IO Insight</span>
           </div>
-          <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
-          <p className="text-sm text-white mt-1">Log in to access your system</p>
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
+            <p className="text-sm text-white mt-1">Log in to access your system</p>
+          </div>
         </div>
         <div className="p-10">
           <CardHeader className="text-left space-y-1 mb-6 p-0">
@@ -52,7 +57,7 @@ export function LoginForm({
           </CardHeader>
 
           <form>
-            <div className="grid gap-5">
+            <div className="grid gap-6">
               {/* Username */}
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
@@ -86,7 +91,7 @@ export function LoginForm({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+                className="w-full border-blue-600 text-blue-600 hover:bg-blue-200"
                 disabled={isSigning}
                 onClick={onLogin}
               >
