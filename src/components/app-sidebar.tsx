@@ -3,10 +3,8 @@ import {
   AudioWaveform,
   BookOpen,
   Command,
-  File,
   FileText,
   GalleryVerticalEnd,
-
   SquareTerminal,
 } from "lucide-react"
 
