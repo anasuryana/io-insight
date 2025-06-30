@@ -87,16 +87,16 @@ export function Page() {
     return (
         <>
             {/* Layout utama: full height layar, tanpa scroll luar */}
-            <div className="bg-gray-100 h-screen flex flex-col overflow-hidden">
+            <div className="bg-gray-50 h-screen flex flex-col overflow-hidden">
 
                 {/* Header tetap tinggi 64px */}
-                <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
+                <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4 bg-white">
                     <SidebarTrigger className="-ml-1" />
                     <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem className="md:block">
-                                <BreadcrumbLink href="#">Welcome</BreadcrumbLink>
+                                <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
@@ -104,21 +104,39 @@ export function Page() {
 
                 {/* Kontainer isi utama (card + chart): fleksibel & scrollable */}
                 <div className="container mx-auto p-2 flex-grow flex flex-col overflow-auto min-h-0">
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-1 flex-shrink-0 text-neutral-400">
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><Settings /> Line : <Badge variant={'default'}>{lineData.lineName}</Badge></div>
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><CalendarDays /> Time : <Badge variant={'default'}>{formattedDate}</Badge></div>
-                        <div className="rounded-lg p-1 flex items-center space-x-4"><ChartColumn /> Status : <Badge style={{ background: badgeBG, color: badgeColor }}>
-                            {
-                                badgeContent
-
-                            }</Badge></div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3 mt-2">
+                        <div className="bg-white rounded-xl shadow p-4 flex items-center gap-3">
+                            <Settings className="text-blue-500 w-5 h-5" />
+                            <div>
+                                <div className="text-xs text-gray-400">Line</div>
+                                <div className="text-sm font-semibold text-gray-800">{lineData.lineName}</div>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-xl shadow p-4 flex items-center gap-3">
+                            <CalendarDays className="text-green-500 w-5 h-5" />
+                            <div>
+                                <div className="text-xs text-gray-400">Time</div>
+                                <div className="text-sm font-semibold text-gray-800">{formattedDate}</div>
+                            </div>
+                        </div>
+                        <div className={`rounded-xl shadow p-4 flex items-center gap-3 text-white ${
+                                badgeContent === 'Good' ? 'bg-green-500' :
+                                badgeContent === 'Retry' ? 'bg-yellow-500' :
+                                badgeContent === 'Not Good' ? 'bg-red-500' :
+                                badgeContent === 'Offline' ? 'bg-gray-500' :
+                                'bg-gray-400'
+                            }`}
+                        >
+                            <ChartColumn className="w-5 h-5 opacity-80" />
+                            <div>
+                                <div className="text-xs opacity-80">Status</div>
+                                <div className="text-sm font-semibold">{badgeContent}</div>
+                            </div>
+                        </div>
+                        
                     </div>
-
-                    {/* Cards section: tinggi fleksibel sesuai isi */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3 flex-shrink-0">
-                        {/* Not Good Card */}
-                        <div className="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-4">
+                        <div className="bg-white border-red-500 border-l-6 rounded-xl shadow p-4 flex items-center space-x-4">
                             <div className="text-red-500 text-3xl">❌</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
@@ -130,8 +148,7 @@ export function Page() {
                             </div>
                         </div>
 
-                        {/* Retry Card */}
-                        <div className="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-4">
+                        <div className="bg-white border-yellow-500 border-l-6 rounded-xl shadow p-4 flex items-center space-x-4">
                             <div className="text-yellow-500 text-3xl">⚠️</div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800">Retry</h3>
@@ -142,8 +159,6 @@ export function Page() {
                                 }}>Details</a>
                             </div>
                         </div>
-
-
                     </div>
 
                     {/* Charts section: ambil sisa ruang + tidak overflow */}
