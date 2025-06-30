@@ -135,8 +135,8 @@ export default function Report1Page() {
                         <p className="text-3xl font-bold text-gray-900">{resumeNG.toString()}</p>
                     </div>
                 </div>
-                <div className="bg-white border-yellow-500 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
-                    <TriangleAlert className="text-yellow-500 w-16 h-16" />
+                <div className="bg-white border-yellow-300 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
+                    <TriangleAlert className="text-yellow-300 w-16 h-16" />
                     <div>
                         <h3 className="text-lg font-bold text-gray-800">Retry</h3>
                         <p className="text-3xl font-bold text-gray-900">{resumeRetry.toString()}</p>

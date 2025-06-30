@@ -119,12 +119,12 @@ export function Page() {
                                 <div className="text-sm font-semibold text-gray-800">{formattedDate}</div>
                             </div>
                         </div>
-                        <div className={`rounded-lg shadow p-4 flex items-center gap-3 text-white ${
-                                badgeContent === 'Good' ? 'bg-green-500 animate-pulse' :
-                                badgeContent === 'Retry' ? 'bg-yellow-500 animate-pulse' :
-                                badgeContent === 'Not Good' ? 'bg-red-500 animate-pulse' :
-                                badgeContent === 'Offline' ? 'bg-gray-600' :
-                                'bg-gray-400'
+                        <div className={`rounded-lg shadow p-4 flex items-center gap-3 ${
+                                badgeContent === 'Good' ? 'bg-green-500 text-white animate-pulse' :
+                                badgeContent === 'Retry' ? 'bg-yellow-300 text-black animate-pulse' :
+                                badgeContent === 'Not Good' ? 'bg-red-600 text-white animate-pulse' :
+                                badgeContent === 'Offline' ? 'bg-gray-400 text-white' :
+                                'bg-gray-300'
                             }`}
                         >
                             <ChartBarDecreasing className="w-8 h-8 opacity-100" />
@@ -155,9 +155,9 @@ export function Page() {
                                 Details
                             </button>
                         </div>
-                        <div className="bg-white border-yellow-500 border-l-6 rounded-lg shadow p-4 flex justify-between items-center">
+                        <div className="bg-white border-yellow-300 border-l-6 rounded-lg shadow p-4 flex justify-between items-center">
                             <div className="flex items-center space-x-4">
-                                <TriangleAlert className="text-yellow-500 w-16 h-16" />
+                                <TriangleAlert className="text-yellow-300 w-16 h-16" />
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">Retry</h3>
                                     <p className="text-3xl font-bold text-gray-900">{totalRetry}</p>
