@@ -114,8 +114,8 @@ export default function Report1Page() {
     }
 
     return (
-        <div>
-            <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
+        <div className="bg-gray-50 h-screen flex flex-col overflow-hidden">
+            <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4 bg-white">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
                 <Breadcrumb>
@@ -127,41 +127,38 @@ export default function Report1Page() {
                 </Breadcrumb>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 m-2 gap-3">
-                <Card className="w-full p-1 !gap-1">
-                    <CardContent className="p-1">
-                        <div className="p-1 flex items-center space-x-4">
-                            <div className="text-red-500 text-3xl">❌</div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
-                                <p className="text-3xl font-bold text-gray-900">{resumeNG.toString()}</p>
-                            </div>
-                        </div>
-                    </CardContent>
-
-                </Card>
-                <Card className="w-full p-1 !gap-1">
-                    <CardContent className="p-1">
-                        <div className="p-1 flex items-center space-x-4">
-                            <div className="text-red-500 text-3xl">⚠️</div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800">Retry</h3>
-                                <p className="text-3xl font-bold text-gray-900">{resumeRetry.toString()}</p>
-                            </div>
-                        </div>
-                    </CardContent>
-
-                </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 m-2 gap-3 mt-3 mb-1">
+                <div className="bg-white border-red-500 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
+                    <div className="text-red-500 text-3xl">❌</div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
+                        <p className="text-3xl font-bold text-gray-900">{resumeNG.toString()}</p>
+                    </div>
+                </div>
+                <div className="bg-white border-yellow-500 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
+                    <div className="text-red-500 text-3xl">⚠️</div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
+                        <p className="text-3xl font-bold text-gray-900">{resumeRetry.toString()}</p>
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 m-2">
                 <Card className="w-full">
                     <CardContent>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
+                                <h2 className="text-xl font-semibold">Historical Data</h2>
+                            </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-end gap-4 mb-3">
+                            <div className="flex flex-col">
+                                <label htmlFor="dateFrom" className="mb-1 text-sm font-medium text-gray-700">Date From</label>
                                 <Input type="date" onChange={handleChange} name="dateFrom" />
                             </div>
                             <div>
+                                <label htmlFor="dateTo" className="mb-1 text-sm font-medium text-gray-700">Date To</label>
                                 <Input type="date" onChange={handleChange} name="dateTo" />
                             </div>
                             <div>
@@ -178,7 +175,7 @@ export default function Report1Page() {
                             </div>
                         </div>
 
-                        <div className="overflow-auto max-h-[50vh] border border-gray-300 rounded mb-1">
+                        <div className="overflow-auto max-h-[50vh] border border-gray-300 rounded mb-3">
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
@@ -192,6 +189,13 @@ export default function Report1Page() {
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
                                     {/* Contoh banyak data */}
                                     {
+                                        rowData.data.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
+                                                    No records found. Please select a date range.
+                                                </td>
+                                            </tr>
+                                        ) : (
                                         rowData.data.map((item: any, index) => {
                                             let statusColor = "bg-black"; // default
                                             switch (item.status) {
@@ -204,19 +208,20 @@ export default function Report1Page() {
                                                 case 'Red':
                                                     statusColor = "bg-red-500"
                                                     break;
-
                                             }
-
-                                            return <tr key={index}>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">
-                                                    <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
-                                                </td>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
-                                            </tr>
-                                        })
+                                            return (
+                                                <tr key={index}>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">
+                                                        <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
+                                                    </td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
+                                                </tr>
+                                                )
+                                            })
+                                        )
                                     }
                                 </tbody>
                             </table>
