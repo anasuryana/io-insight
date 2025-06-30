@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import DeviceAddDialog from "./DeviceAddDialog";
 import DeviceEditDialog from "./DeviceEditDialog";
+import { Pencil, Trash2, CirclePlusIcon} from "lucide-react"
 
 export default function DevicePage() {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
@@ -121,7 +122,15 @@ export default function DevicePage() {
                                 <h2 className="text-xl font-semibold">Device List</h2>
                             </div>
                             <div className="flex sm:justify-end">
-                                <Button variant="default" size={'sm'} onClick={() => setShowFindModal(true)}>New</Button>
+                                <Button
+                                    variant="success"
+                                    size="sm"
+                                    onClick={() => setShowFindModal(true)}
+                                    className="flex items-center gap-1 hover:bg-green-400"
+                                >
+                                    <CirclePlusIcon className="w-4 h-4" />
+                                    New
+                                </Button>
                             </div>
                         </div>
 
@@ -153,11 +162,28 @@ export default function DevicePage() {
                                                 <td className="px-4 py-2 border border-gray-300">{item.line_name}</td>
                                                 <td className="px-4 py-2 border border-gray-300">
                                                     <div className="flex gap-x-2">
-                                                        <Button variant={'success'} size={'sm'} onClick={() => {
-                                                            setRowDataSelected(item)
-                                                            setShowFindModal2(true)
-                                                        }}>Edit</Button>
-                                                        <Button variant={'destructive'} size={'sm'} onClick={() => handleDelete(item.id)} disabled={isDeleting}>Delete</Button>
+                                                        <Button
+                                                            variant="default"
+                                                            size="sm"
+                                                            className="flex items-center gap-1 hover:bg-blue-400"
+                                                            onClick={() => {
+                                                                setRowDataSelected(item);
+                                                                setShowFindModal2(true);
+                                                            }}
+                                                        >
+                                                            <Pencil className="w-4 h-4" />
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            className="flex items-center gap-1 hover:bg-red-400"
+                                                            onClick={() => handleDelete(item.id)}
+                                                            disabled={isDeleting}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                            Delete
+                                                        </Button>
                                                     </div>
                                                 </td>
                                             </tr>
