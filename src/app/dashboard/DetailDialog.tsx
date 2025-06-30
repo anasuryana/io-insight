@@ -81,8 +81,8 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                             <tr>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Date</th>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Time</th>
-                                <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Number</th>
-                                <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Color</th>
+                                <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Name</th>
+                                <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Status</th>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty</th>
                             </tr>
                         </thead>
