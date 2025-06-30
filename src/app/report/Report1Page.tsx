@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import axios from "axios";
-import { FileSpreadsheet, Search } from "lucide-react";
+import { FileSpreadsheet, Search, TriangleAlert, XOctagon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -129,16 +129,16 @@ export default function Report1Page() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 m-2 gap-3 mt-3 mb-1">
                 <div className="bg-white border-red-500 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
-                    <div className="text-red-500 text-3xl">❌</div>
+                    <XOctagon className="text-red-500 w-16 h-16" />
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
+                        <h3 className="text-lg font-bold text-gray-800">Not Good (NG)</h3>
                         <p className="text-3xl font-bold text-gray-900">{resumeNG.toString()}</p>
                     </div>
                 </div>
                 <div className="bg-white border-yellow-500 border-l-6 rounded-lg shadow p-4 flex items-center space-x-4">
-                    <div className="text-red-500 text-3xl">⚠️</div>
+                    <TriangleAlert className="text-yellow-500 w-16 h-16" />
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Not Good (NG)</h3>
+                        <h3 className="text-lg font-bold text-gray-800">Retry</h3>
                         <p className="text-3xl font-bold text-gray-900">{resumeRetry.toString()}</p>
                     </div>
                 </div>
@@ -163,14 +163,14 @@ export default function Report1Page() {
                             </div>
                             <div>
                                 <div className="flex gap-x-2">
-                                    <Button variant="default" size={'sm'} onClick={() => {
+                                    <Button variant="default" size={'sm'} className="flex items-center gap-1" onClick={() => {
                                         if (!formData.dateFrom || !formData.dateTo) {
                                             toast.warning('Validation', { description: `Please select date` })
                                             return
                                         }
                                         goToPage(1)
                                     }} disabled={isSearching}><Search /> Find</Button>
-                                    <Button variant="success" size={'sm'} disabled={isExporting} onClick={handleClickExport}><FileSpreadsheet /> Export</Button>
+                                    <Button variant="success" size={'sm'} disabled={isExporting} className="flex items-center gap-1" onClick={handleClickExport}><FileSpreadsheet /> Export</Button>
                                 </div>
                             </div>
                         </div>
@@ -181,8 +181,8 @@ export default function Report1Page() {
                                     <tr>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Date</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Time</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Number</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Color</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Name</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Status</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty</th>
                                     </tr>
                                 </thead>
