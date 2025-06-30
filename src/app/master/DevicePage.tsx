@@ -100,8 +100,8 @@ export default function DevicePage() {
     }
 
     return (
-        <div>
-            <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4">
+        <div className="bg-gray-50 h-screen flex flex-col overflow-hidden">
+            <header className="flex h-13 shrink-0 items-center gap-2 border-b px-4 bg-white">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
                 <Breadcrumb>
@@ -129,15 +129,22 @@ export default function DevicePage() {
                             <table className="w-full text-sm border-collapse">
                                 <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow">
                                     <tr>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Tx IP</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Rx IP</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Tx IP Address</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Rx IP Address</th>
                                         <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Model</th>
                                         <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Line</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Aksi</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-left bg-gray-100">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
                                     {
+                                        rowData.data.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
+                                                No records found.
+                                            </td>
+                                        </tr>
+                                        ) : (
                                         rowData.data.map((item: any, index) => {
                                             return <tr key={index}>
                                                 <td className="px-4 py-2 border border-gray-300">{item.IP_device_tx}</td>
@@ -155,7 +162,7 @@ export default function DevicePage() {
                                                 </td>
                                             </tr>
                                         })
-                                    }
+                                    )}
                                 </tbody>
                             </table>
                         </div>

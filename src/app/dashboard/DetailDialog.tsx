@@ -72,7 +72,7 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Detail</DialogTitle>
+                    <DialogTitle>Details</DialogTitle>
                 </DialogHeader>
 
                 <div className="overflow-auto max-h-[50vh] border border-gray-300 rounded mb-1">
@@ -89,6 +89,13 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                         <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
                             {/* Contoh banyak data */}
                             {
+                                rowData.data.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
+                                        No records found.
+                                    </td>
+                                </tr>
+                                ) : (
                                 rowData.data.map((item: any, index) => {
                                     let statusColor = "bg-black"; // default
                                     switch (item.status) {
@@ -101,19 +108,20 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                                         case 'Red':
                                             statusColor = "bg-red-500"
                                             break;
-
                                     }
-
-                                    return <tr key={index}>
-                                        <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
-                                        <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
-                                        <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
-                                        <td className="px-4 py-2 border border-gray-300 text-center">
-                                            <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
-                                        </td>
-                                        <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
-                                    </tr>
-                                })
+                                        return (
+                                            <tr key={index}>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">
+                                                    <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
+                                                </td>
+                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
+                                            </tr>
+                                        )
+                                    })
+                                )
                             }
                         </tbody>
                     </table>
