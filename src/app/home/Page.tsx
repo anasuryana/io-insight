@@ -1,6 +1,5 @@
 import ChartDonatGue from "@/components/chart-donat-gue"
 import ChartGue from "@/components/chart-gue"
-import { Badge } from "@/components/ui/badge"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -33,8 +32,8 @@ export function Page() {
     const minutes = String(today.getMinutes()).padStart(2, '0');
     const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
     const [badgeContent, setBadgeContent] = useState('')
-    const [badgeBG, setBadgeBG] = useState('')
-    const [badgeColor, setBadgeColor] = useState('')
+    const [, setBadgeBG] = useState('')
+    const [, setBadgeColor] = useState('')
     const [rowDataSelected, setRowDataSelected] = useState({ status: '' })
     const [showFindModal, setShowFindModal] = useState(false)
 

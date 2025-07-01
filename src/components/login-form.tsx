@@ -1,8 +1,5 @@
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -22,15 +19,11 @@ type LoginFormProps = React.ComponentProps<"div"> & {
 };
 
 export function LoginForm({
-  className,
   onLogin,
-  password,
-  userName,
   onUsernameChange,
   onPasswordChange,
   isSigning,
-  messageFromServer,
-  ...props
+  messageFromServer
 }: LoginFormProps) {
 
   return (
