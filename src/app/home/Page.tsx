@@ -103,7 +103,7 @@ export function Page() {
 
                 {/* Kontainer isi utama (card + chart): fleksibel & scrollable */}
                 <div className="container mx-auto p-2 flex-grow flex flex-col overflow-auto min-h-0">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3 mt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                         <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
                             <Settings className="text-blue-500 w-8 h-8" />
                             <div>
