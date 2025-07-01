@@ -29,7 +29,7 @@ function App() {
       }
       axios.get(import.meta.env.VITE_APP_ENDPOINT + '/user', config)
         .then((response) => {
-          const datanya = response.data
+          const datanya = response.data.data
           setUserInfo({ ...datanya })
         }).catch(error => {
           setUserInfo({})
@@ -53,10 +53,10 @@ function App() {
           path="dashboard"
           element={<Page onLoggedIn={handleLoggedIn} userInfo={userInfo} />} >
           <Route index element={<HomePage />} />
-          <Route path="access-role" element={<RolePage />} />
-          <Route path="access-user" element={<UserPage />} />
-          <Route path="master-device" element={<DevicePage />} />
-          <Route path="master-sms" element={<SMSPage />} />
+          <Route path="access-role" element={<RolePage userInfo={userInfo} />} />
+          <Route path="access-user" element={<UserPage userInfo={userInfo} />} />
+          <Route path="master-device" element={<DevicePage userInfo={userInfo} />} />
+          <Route path="master-sms" element={<SMSPage userInfo={userInfo} />} />
           <Route path="report-1" element={<Report1Page />} />
         </Route>
         <Route>

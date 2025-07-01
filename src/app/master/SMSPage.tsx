@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import SMSAddDialog from "./SMSAddDialog";
 import SMSEditDialog from "./SMSEditDialog";
-import { Pencil, Trash2, CirclePlusIcon} from "lucide-react"
+import { Pencil, Trash2, CirclePlusIcon } from "lucide-react"
 
-export default function SMSPage() {
+export default function SMSPage({ userInfo }: { userInfo: any }) {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] })
     const [rowDataSelected, setRowDataSelected] = useState<any>({})
     const [pageAt, setPageAt] = useState<number>(1)
@@ -116,6 +116,7 @@ export default function SMSPage() {
                             </div>
                             <div className="flex sm:justify-end">
                                 <Button
+                                    disabled={userInfo.role_name == "admin" ? false : true}
                                     variant="success"
                                     size="sm"
                                     onClick={() => setShowFindModal(true)}
@@ -146,40 +147,41 @@ export default function SMSPage() {
                                                 </td>
                                             </tr>
                                         ) : (
-                                        rowData.data.map((item: any, index) => (
-                                            <tr key={index}>
-                                                <td className="px-4 py-2 border border-gray-300">{item.name}</td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.telp_no}</td>
-                                                <td className="px-4 py-2 border border-gray-300">{item.status}</td>
-                                                <td className="px-4 py-2 border border-gray-300">
-                                                    <div className="flex gap-x-2">
-                                                    <Button
-                                                        variant="default"
-                                                        size="sm"
-                                                        className="flex items-center gap-1 hover:bg-blue-400"
-                                                        onClick={() => {
-                                                            setRowDataSelected(item);
-                                                            setShowFindModal2(true);
-                                                        }}
-                                                    >
-                                                        <Pencil className="w-4 h-4" />
-                                                        Edit
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        className="flex items-center gap-1 hover:bg-red-400"
-                                                        onClick={() => handleDelete(item.id_user)}
-                                                        disabled={isDeleting}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                        Delete
-                                                    </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
+                                            rowData.data.map((item: any, index) => (
+                                                <tr key={index}>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.name}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.telp_no}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.status}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">
+                                                        <div className="flex gap-x-2">
+                                                            <Button
+                                                                disabled={userInfo.role_name == "admin" ? false : true}
+                                                                variant="default"
+                                                                size="sm"
+                                                                className="flex items-center gap-1 hover:bg-blue-400"
+                                                                onClick={() => {
+                                                                    setRowDataSelected(item);
+                                                                    setShowFindModal2(true);
+                                                                }}
+                                                            >
+                                                                <Pencil className="w-4 h-4" />
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                variant="destructive"
+                                                                size="sm"
+                                                                className="flex items-center gap-1 hover:bg-red-400"
+                                                                onClick={() => handleDelete(item.id_user)}
+                                                                disabled={isDeleting}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                                Delete
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                 </tbody>
                             </table>
                         </div>

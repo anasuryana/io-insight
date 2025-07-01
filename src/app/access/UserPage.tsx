@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import UserAddDialog from "./UserAddDialog";
 import UserEditDialog from "./UserEditPage";
-import { Pencil, Trash2, CirclePlusIcon} from "lucide-react"
+import { Pencil, Trash2, CirclePlusIcon } from "lucide-react"
 
-export default function UserPage() {
+export default function UserPage({ userInfo }: { userInfo: any }) {
     const [rowData, setRowData] = useState<{ data: any[] }>({ data: [] });
     const [rowDataSelected, setRowDataSelected] = useState<any>({});
     const [pageAt, setPageAt] = useState<number>(1);
@@ -137,6 +137,7 @@ export default function UserPage() {
                             <div><h2 className="text-xl font-semibold">User List</h2></div>
                             <div className="flex sm:justify-end">
                                 <Button
+                                    disabled={userInfo.role_name == "admin" ? false : true}
                                     variant="success"
                                     size="sm"
                                     onClick={() => setShowFindModal(true)}
@@ -162,58 +163,59 @@ export default function UserPage() {
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
                                     {
-                                    rowData.data.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
-                                                No records found.
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                    rowData.data.map((item: any, index) => (
-                                        <tr key={index}>
-                                            <td className="px-4 py-2 border border-gray-300">
-                                                <Switch
-                                                    checked={item.active === '1'}
-                                                    onClick={() => handleClickSwitch({
-                                                        currentStatus: item.active,
-                                                        rowData: { id: item.id },
-                                                        theIndex: index
-                                                    })}
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2 border border-gray-300">{item.nick_name}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{item.role_name}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
-                                            <td className="px-4 py-2 border border-gray-300">
-                                                <div className="flex gap-x-2">
-                                                    <Button
-                                                        variant="default"
-                                                        size="sm"
-                                                        className="flex items-center gap-1 hover:bg-blue-400"
-                                                        onClick={() => {
-                                                            setRowDataSelected(item);
-                                                            setShowFindModal2(true);
-                                                        }}
-                                                    >
-                                                        <Pencil className="w-4 h-4" />
-                                                        Edit
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        className="flex items-center gap-1 hover:bg-red-400"
-                                                        onClick={() => handleDelete(item.id)}
-                                                        disabled={isDeleting}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                        Delete
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        ))             
-                                    )}
+                                        rowData.data.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
+                                                    No records found.
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            rowData.data.map((item: any, index) => (
+                                                <tr key={index}>
+                                                    <td className="px-4 py-2 border border-gray-300">
+                                                        <Switch
+                                                            checked={item.active === '1'}
+                                                            onClick={() => handleClickSwitch({
+                                                                currentStatus: item.active,
+                                                                rowData: { id: item.id },
+                                                                theIndex: index
+                                                            })}
+                                                        />
+                                                    </td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.nick_name}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.role_name}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.created_at}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">{item.updated_at}</td>
+                                                    <td className="px-4 py-2 border border-gray-300">
+                                                        <div className="flex gap-x-2">
+                                                            <Button
+                                                                disabled={userInfo.role_name == "admin" ? false : true}
+                                                                variant="default"
+                                                                size="sm"
+                                                                className="flex items-center gap-1 hover:bg-blue-400"
+                                                                onClick={() => {
+                                                                    setRowDataSelected(item);
+                                                                    setShowFindModal2(true);
+                                                                }}
+                                                            >
+                                                                <Pencil className="w-4 h-4" />
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                variant="destructive"
+                                                                size="sm"
+                                                                className="flex items-center gap-1 hover:bg-red-400"
+                                                                onClick={() => handleDelete(item.id)}
+                                                                disabled={isDeleting}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                                Delete
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                 </tbody>
                             </table>
                         </div>
