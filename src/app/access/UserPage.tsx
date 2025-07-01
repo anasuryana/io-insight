@@ -174,6 +174,7 @@ export default function UserPage({ userInfo }: { userInfo: any }) {
                                                 <tr key={index}>
                                                     <td className="px-4 py-2 border border-gray-300">
                                                         <Switch
+                                                            disabled={userInfo.role_name == "admin" ? false : true}
                                                             checked={item.active === '1'}
                                                             onClick={() => handleClickSwitch({
                                                                 currentStatus: item.active,
