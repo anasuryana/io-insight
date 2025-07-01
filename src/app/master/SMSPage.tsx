@@ -172,7 +172,7 @@ export default function SMSPage({ userInfo }: { userInfo: any }) {
                                                                 size="sm"
                                                                 className="flex items-center gap-1 hover:bg-red-400"
                                                                 onClick={() => handleDelete(item.id_user)}
-                                                                disabled={isDeleting}
+                                                                disabled={userInfo.role_name == "admin" && isDeleting == false ? false : true}
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                                 Delete

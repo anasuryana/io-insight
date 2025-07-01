@@ -80,10 +80,10 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
-        {
-          title: "Role",
-          url: "access-role",
-        },
+        // {
+        //   title: "Role",
+        //   url: "access-role",
+        // },
         {
           title: "User",
           url: "access-user",

@@ -177,11 +177,11 @@ export default function DevicePage({ userInfo }: { userInfo: any }) {
                                                                 Edit
                                                             </Button>
                                                             <Button
+                                                                disabled={userInfo.role_name == "admin" && isDeleting == false ? false : true}
                                                                 variant="destructive"
                                                                 size="sm"
                                                                 className="flex items-center gap-1 hover:bg-red-400"
                                                                 onClick={() => handleDelete(item.id)}
-                                                                disabled={isDeleting}
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                                 Delete
