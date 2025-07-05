@@ -15,8 +15,8 @@ interface FindModalProps {
 
 export default function SMSAddDialog({ open, onClose }: FindModalProps) {
     const inputRef = useMask({
-        mask: '+62 000-0000-0000',
-        replacement: { '0': /\d/ },
+        mask: '+62 ###-####-####',
+        replacement: { '#': /\d/ },
     });
     const [isSaving, setIsSaving] = useState(false)
     const [formData, setFormData] = useState({
