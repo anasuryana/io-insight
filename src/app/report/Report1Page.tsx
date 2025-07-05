@@ -105,7 +105,7 @@ export default function Report1Page() {
                 responseType: 'blob',
             }).then(response => {
                 setIsExporting(false)
-                saveBlob(response.data, `Logs from ${formData.dateFrom} to ${formData.dateTo} .csv`)
+                saveBlob(response.data, `Logs from ${formData.dateFrom} to ${formData.dateTo} .xlsx`)
             }).catch(error => {
                 console.log(error)
                 setIsExporting(false)
@@ -182,8 +182,10 @@ export default function Report1Page() {
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Date</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Time</th>
                                         <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Name</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Status</th>
-                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty Red</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty Yellow</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty Green</th>
+                                        <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty Off</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&>tr:nth-child(even)]:bg-gray-50 [&>tr:hover]:bg-gray-100">
@@ -191,33 +193,37 @@ export default function Report1Page() {
                                     {
                                         rowData.data.length === 0 ? (
                                             <tr>
-                                                <td colSpan={5} className="px-4 py-4 text-center text-gray-500 italic">
+                                                <td colSpan={7} className="px-4 py-4 text-center text-gray-500 italic">
                                                     No records found. Please select a date range.
                                                 </td>
                                             </tr>
                                         ) : (
                                         rowData.data.map((item: any, index) => {
-                                            let statusColor = "bg-black"; // default
-                                            switch (item.status) {
-                                                case 'Green':
-                                                    statusColor = "bg-green-500"
-                                                    break;
-                                                case 'Yellow':
-                                                    statusColor = "bg-yellow-500"
-                                                    break;
-                                                case 'Red':
-                                                    statusColor = "bg-red-500"
-                                                    break;
-                                            }
                                             return (
                                                 <tr key={index}>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">
-                                                        <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
+                                                        <span className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center mx-auto">
+                                                            {item.qty_red}
+                                                        </span>
                                                     </td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">
+                                                        <span className="w-6 h-6 rounded-full bg-yellow-400 text-black flex items-center justify-center mx-auto">
+                                                            {item.qty_yellow}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">
+                                                        <span className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center mx-auto">
+                                                            {item.qty_green}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">
+                                                        <span className="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center mx-auto">
+                                                            {item.qty_off}
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                                 )
                                             })

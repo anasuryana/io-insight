@@ -82,7 +82,6 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Date</th>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Time</th>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Line Name</th>
-                                <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Status</th>
                                 <th className="px-4 py-2 border border-gray-300 text-center bg-gray-100">Qty</th>
                             </tr>
                         </thead>
@@ -97,27 +96,20 @@ export default function DetailDialog({ open, onClose, selectedRowData }: FindMod
                                 </tr>
                                 ) : (
                                 rowData.data.map((item: any, index) => {
-                                    let statusColor = "bg-black"; // default
-                                    switch (item.status) {
-                                        case 'Green':
-                                            statusColor = "bg-green-500"
-                                            break;
-                                        case 'Yellow':
-                                            statusColor = "bg-yellow-500"
-                                            break;
-                                        case 'Red':
-                                            statusColor = "bg-red-500"
-                                            break;
-                                    }
                                         return (
                                             <tr key={index}>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.date}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.time}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">{item.line_name}</td>
                                                 <td className="px-4 py-2 border border-gray-300 text-center">
-                                                    <div className={`w-5 h-5 rounded-full ${statusColor} mx-auto`} />
+                                                    <div className={`
+                                                        w-6 h-6 rounded-full flex items-center justify-center mx-auto
+                                                        ${selectedRowData.status === 'Red' ? 'bg-red-500 text-white' : ''}
+                                                        ${selectedRowData.status === 'Yellow' ? 'bg-yellow-400 text-black' : ''}
+                                                    `}>
+                                                        {item[`qty_${selectedRowData.status.toLowerCase()}`]}
+                                                    </div>
                                                 </td>
-                                                <td className="px-4 py-2 border border-gray-300 text-center">{item.qty}</td>
                                             </tr>
                                         )
                                     })

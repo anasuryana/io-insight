@@ -21,9 +21,7 @@ export function Page() {
     const [chartData, setChartData] = useState([
         { time: "January", ng: 0, retry: 0 },
     ])
-    const [lineData, setLineData] = useState({ lineName: '', lastStatus: '', isDataExist: '' })
-    const totalNg = chartData.reduce((total, item) => Number(total) + Number(item.ng), 0)
-    const totalRetry = chartData.reduce((total, item) => Number(total) + Number(item.retry), 0)
+    const [lineData, setLineData] = useState({ lineName: '', lastStatus: '', isDataExist: '', lastYellowQty: 0, lastRedQty: 0})
     const today = new Date();
     const year = today.getFullYear();
     const month = today.toLocaleString('en-US', { month: 'long' }); // 'Jan', 'Feb', etc.
@@ -51,10 +49,12 @@ export function Page() {
                     setChartData(data)
                     setLineData({
                         lineName: response.data.line_name,
-                        lastStatus: response.data.last_status,
-                        isDataExist: response.data.is_data_exist
+                        lastStatus: response.data.status,
+                        isDataExist: response.data.is_data_exist,
+                        lastYellowQty: response.data.qty_yellow,
+                        lastRedQty: response.data.qty_red
                     })
-                    switch (response.data.last_status) {
+                    switch (response.data.status) {
                         case 'Red':
                             setBadgeContent('Not Good');
                             setBadgeBG('red');
@@ -140,7 +140,7 @@ export function Page() {
                                 <XOctagon className="text-red-500 w-16 h-16" />
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">Not Good (NG)</h3>
-                                    <p className="text-3xl font-bold text-gray-900">{totalNg}</p>
+                                    <p className="text-3xl font-bold text-gray-900">{lineData.lastRedQty}</p>
                                 </div>
                             </div>
                             <button
@@ -159,7 +159,7 @@ export function Page() {
                                 <TriangleAlert className="text-yellow-300 w-16 h-16" />
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">Retry</h3>
-                                    <p className="text-3xl font-bold text-gray-900">{totalRetry}</p>
+                                    <p className="text-3xl font-bold text-gray-900">{lineData.lastYellowQty}</p>
                                 </div>
                             </div>
                             <button
